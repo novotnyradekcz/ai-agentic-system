@@ -53,8 +53,12 @@ python main.py --audio data/recording.mp3 --interactive
 
 ### Use different LLM provider
 ```bash
+# Default is Gemini
+python main.py --interactive
+
+# Use OpenAI or Anthropic instead
+python main.py --llm openai --interactive
 python main.py --llm anthropic --interactive
-python main.py --llm gemini --interactive
 ```
 
 ### Reset database and start fresh
@@ -86,9 +90,9 @@ GOOGLE_API_KEY=...
 - `multi-qa-MiniLM-L6-cos-v1` - Optimized for Q&A
 
 **LLM Providers**:
+- `gemini` - Gemini models (default: gemini-2.5-flash) ⭐ **DEFAULT**
 - `openai` - GPT models (default: gpt-3.5-turbo)
 - `anthropic` - Claude models (default: claude-3-sonnet)
-- `gemini` - Gemini models (default: gemini-2.5-flash)
 
 ## 📁 Project Structure
 

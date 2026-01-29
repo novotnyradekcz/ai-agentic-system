@@ -112,6 +112,7 @@ def test_environment_variables():
     
     openai_key = os.getenv("OPENAI_API_KEY")
     anthropic_key = os.getenv("ANTHROPIC_API_KEY")
+    google_key = os.getenv("GOOGLE_API_KEY")
     
     if openai_key and openai_key != "your_openai_api_key_here":
         print("✓ OpenAI API key found")
@@ -123,13 +124,20 @@ def test_environment_variables():
     else:
         print("⚠️  Anthropic API key not configured")
     
+    if google_key and google_key != "your_google_api_key_here":
+        print("✓ Google Gemini API key found")
+    else:
+        print("⚠️  Google Gemini API key not configured")
+    
     if (openai_key and openai_key != "your_openai_api_key_here") or \
-       (anthropic_key and anthropic_key != "your_anthropic_api_key_here"):
+       (anthropic_key and anthropic_key != "your_anthropic_api_key_here") or \
+       (google_key and google_key != "your_google_api_key_here"):
         print("\n✓ At least one LLM API key configured")
         return True
     else:
         print("\n⚠️  No LLM API keys configured")
         print("Add your keys to .env file to use the RAG system")
+        print("Note: Gemini is the default LLM provider")
         return False
 
 

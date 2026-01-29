@@ -69,7 +69,8 @@ cd "/Users/rano/Documents/AI Academy/HW4/rag_pipeline"
 ### Step 2: Configure API Keys
 ```bash
 cp .env.example .env
-# Edit .env and add your OpenAI or Anthropic API key
+# Edit .env and add your Google Gemini API key (default LLM)
+# You can also use OpenAI or Anthropic instead
 ```
 
 ### Step 3: Add Your Data & Run

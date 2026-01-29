@@ -244,11 +244,12 @@ def main():
         action='store_true',
         help='Force reindexing of all files (even if already processed)'
     )
-    parser.add_argument(        '--llm',
+    parser.add_argument(
+        '--llm',
         type=str,
         default='gemini',
         choices=['openai', 'anthropic', 'gemini'],
-        help='LLM provider to use'
+        help='LLM provider to use (default: gemini)'
     )
     
     args = parser.parse_args()

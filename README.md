@@ -103,7 +103,7 @@ ANTHROPIC_API_KEY=sk-ant-your-anthropic-key-here
 GOOGLE_API_KEY=your-google-api-key-here
 ```
 
-**You need at least one LLM API key** (OpenAI, Anthropic, or Google Gemini) for answer generation.
+**You need at least one LLM API key** for answer generation. The pipeline uses **Google Gemini by default** (you can also use OpenAI or Anthropic).
 
 ## Usage
 
@@ -164,11 +164,14 @@ python main.py --audio data/lecture.mp3 --query "What topics were covered?"
 #### Use Different LLM Provider
 
 ```bash
-# Use Anthropic Claude instead of OpenAI
-python main.py --llm anthropic --interactive
+# Default is Google Gemini
+python main.py --interactive
 
-# Use Google Gemini
-python main.py --llm gemini --interactive
+# Use OpenAI GPT instead
+python main.py --llm openai --interactive
+
+# Use Anthropic Claude
+python main.py --llm anthropic --interactive
 ```
 
 #### Reset Vector Database
