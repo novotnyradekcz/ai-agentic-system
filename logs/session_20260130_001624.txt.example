@@ -1,0 +1,83 @@
+================================================================================
+RAG Interactive Session Transcript
+Session Start: 2026-01-30 00:16:24
+LLM Provider: gemini
+Model: gemini-2.5-flash
+Total Queries: 3
+================================================================================
+
+================================================================================
+Query #1
+================================================================================
+
+Question:
+What are the production 'Do's' for RAG?
+
+
+Answer:
+Based on the provided context, the production 'Do's' for RAG are:
+
+*   Start simple, iterate based on metrics.
+*   Use metadata filtering (product, language, permissions).
+*   Combine vector + keyword search (hybrid approach).
+*   Monitor retrieval quality (recall@k, precision).
+*   Keep embeddings synchronized with documents.
+*   Evaluate with domain-specific questions.
+
+
+Sources:
+  1. 1st Part_Productized Enterprise RAG.mp4 (relevance: 0.306)
+  2. RAG Intro.pdf (relevance: 0.271)
+  3. 1st Part_Productized Enterprise RAG.mp4 (relevance: 0.258)
+  4. Databases for GenAI.pdf (relevance: 0.244)
+  5. Databases for GenAI.pdf (relevance: 0.233)
+
+================================================================================
+Query #2
+================================================================================
+
+Question:
+What is the difference between standard retrieval and the ColPali approach?
+
+
+Answer:
+The difference between standard retrieval and the ColPali approach, particularly when dealing with PDFs and images, is as follows:
+
+*   **Standard Retrieval (with PDFs/images):** This approach typically utilizes Optical Character Recognition (OCR) to describe the information present in documents like PDFs. This information is then stored. However, OCR systems quite often fail, which can lead to lower quality retrieval.
+
+*   **ColPali Approach (also referred to as Pali library changes):** This is a newer approach that aims to overcome the limitations of OCR. Instead of relying on OCR for describing information in PDFs, it uses a **vision language model (VLM)**. The image representation is split into patches, and these patches are then embedded into a model. For retrieval, it utilizes that embedding model and the visual language model to provide answers from the images. This approach has shown much better results, approximately 15% better, than standard retrieval systems that use OCR.
+
+
+Sources:
+  1. 1 part. RAG Intro.mp4 (relevance: 0.460)
+  2. 2nd Part_Architecture & Design Patterns.mp4 (relevance: 0.454)
+  3. 2 part Databases for GenAI.mp4 (relevance: 0.453)
+  4. 1 part. RAG Intro.mp4 (relevance: 0.419)
+  5. 2 part Databases for GenAI.mp4 (relevance: 0.418)
+
+================================================================================
+Query #3
+================================================================================
+
+Question:
+Why is hybrid search better than vector-only search?
+
+
+Answer:
+Hybrid search is often better than vector-only search for several reasons mentioned in the context:
+
+*   It provides "much better results when they work together as a hybrid approach" by combining vector and keyword search.
+*   This approach helps to build a "more reliable system" compared to relying solely on vector search.
+*   Specifically, a hybrid system approach combining vector search with BM25 (a keyword-based method) has been shown to "increase accuracy for a bit more than 10 percentage."
+
+
+Sources:
+  1. 1 part. RAG Intro.mp4 (relevance: 0.594)
+  2. 2 part Databases for GenAI.mp4 (relevance: 0.486)
+  3. 2 part Databases for GenAI.mp4 (relevance: 0.470)
+  4. 1 part. RAG Intro.mp4 (relevance: 0.460)
+  5. 1 part. RAG Intro.mp4 (relevance: 0.448)
+
+================================================================================
+Session End: 2026-01-30 00:16:24
+================================================================================

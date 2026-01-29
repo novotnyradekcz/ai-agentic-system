@@ -1,0 +1,27 @@
+================================================================================
+RAG Query Log
+Timestamp: 2026-01-30 00:10:45
+LLM Provider: gemini
+Model: gemini-2.5-flash
+================================================================================
+
+Query:
+What is RAG?
+
+
+Answer:
+Based on the provided context, RAG (Retrieval-Augmented Generation) is fundamentally a system that repurposes the role of Large Language Models (LLMs) by transforming them into powerful translators.
+
+Here's a breakdown of what RAG is and how it works according to the context:
+
+*   **Core Function:** Instead of relying on an LLM to generate knowledge, RAG provides the LLM with both a question and a retrieved answer
+
+
+Sources:
+  1. 1st Part_Productized Enterprise RAG.mp4 (relevance: 0.222)
+  2. 1st Part_Productized Enterprise RAG.mp4 (relevance: 0.185)
+  3. 1st Part_Productized Enterprise RAG.mp4 (relevance: 0.177)
+  4. 1st Part_Productized Enterprise RAG.mp4 (relevance: 0.176)
+  5. 2nd Part_Architecture & Design Patterns.mp4 (relevance: 0.163)
+
+================================================================================
