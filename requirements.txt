@@ -1,0 +1,31 @@
+# PDF Processing
+PyPDF2==3.0.1
+pypdf==4.0.1
+
+# Audio Transcription
+openai-whisper==20231117
+torch>=2.5.0
+torchaudio>=2.5.0
+moviepy==1.0.3
+
+# Text Processing and Chunking
+langchain==0.1.4
+langchain-community==0.0.17
+transformers>=4.35.0
+sentence-transformers>=2.5.0
+
+# Vector Database
+chromadb==0.4.22
+
+# Embeddings
+openai==1.10.0
+
+# LLM
+anthropic==0.18.1
+google-generativeai==0.3.2
+
+# Utilities
+python-dotenv==1.0.1
+tiktoken==0.5.2
+numpy==1.26.3
+tqdm==4.66.1

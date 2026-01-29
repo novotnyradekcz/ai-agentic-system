@@ -1,0 +1,28 @@
+# Environment
+.env
+venv/
+env/
+__pycache__/
+*.pyc
+
+# Data
+data/*.pdf
+data/*.txt
+data/*.csv
+data/*.mp3
+data/*.wav
+data/*.m4a
+data/*.mp4
+
+# Vector Database
+chroma_db/
+*.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
