@@ -377,7 +377,7 @@ Key libraries used:
 
 ## License
 
-This project is for educational purposes (AI Academy HW4).
+This project is for educational purposes (Ciklum AI Academy HW4).
 
 ## Support
 
@@ -386,13 +386,3 @@ For issues or questions:
 2. Verify your API keys are correct
 3. Ensure all dependencies are installed
 4. Check that your data files are in the correct format
-
-## Next Steps
-
-Enhance the pipeline with:
-- Web scraping for online content
-- Support for more document formats (DOCX, TXT, etc.)
-- Multiple language support
-- Advanced retrieval strategies (hybrid search, re-ranking)
-- Conversation history for follow-up questions
-- Custom evaluation metrics
