@@ -1,201 +1,139 @@
-# RAG Pipeline - Quick Reference
+# 🚀 Quick Start Guide - AI Agentic System
 
-## 🚀 Quick Start
+## 5-Minute Setup
 
-**Prerequisites:** Python 3.8+, ffmpeg
-
-```bash
-# Install ffmpeg first (if not installed)
-brew install ffmpeg  # macOS
-# sudo apt-get install ffmpeg  # Linux
-
-# 1. Navigate to project
-cd "/Users/rano/Documents/AI Academy/HW4/rag_pipeline"
-
-# 2. Run setup script
-./setup.sh
-
-# 3. Add your API keys to .env
-cp .env.example .env
-nano .env  # or use any text editor
-
-# 4. Add your data files
-cp your_file.pdf data/
-cp your_audio.mp3 data/
-cp your_video.mp4 data/
-
-# 5. Run the pipeline
-python main.py --interactive
-```
-
-## 📋 Common Commands
-
-### Process all files in data/
-```bash
-python main.py
-```
-
-### Ask a single question
-```bash
-python main.py --query "What is the main topic?"
-```
-
-### Interactive Q&A mode
-```bash
-python main.py --interactive
-```
-
-### Process specific files
-```bash
-python main.py --pdf data/document.pdf --query "Summarize this"
-python main.py --audio data/recording.mp3 --interactive
-```
-
-### Use different LLM provider
-```bash
-# Default is Gemini
-python main.py --interactive
-
-# Use OpenAI or Anthropic instead
-python main.py --llm openai --interactive
-python main.py --llm anthropic --interactive
-```
-
-### Reset database and start fresh
-```bash
-python main.py --reset
-```
-
-## 🔧 Configuration
-
-### API Keys (in .env file)
-```
-OPENAI_API_KEY=sk-...
-ANTHROPIC_API_KEY=sk-ant-...
-GOOGLE_API_KEY=...
-```
-
-### Model Options
-
-**Whisper Models** (audio transcription):
-- `tiny` - Fastest, least accurate
-- `base` - Default, good balance
-- `small` - Better accuracy
-- `medium` - High accuracy
-- `large` - Best accuracy, slowest
-
-**Embedding Models**:
-- `all-MiniLM-L6-v2` - Default, fast
-- `all-mpnet-base-v2` - Better quality
-- `multi-qa-MiniLM-L6-cos-v1` - Optimized for Q&A
-
-**LLM Providers**:
-- `gemini` - Gemini models (default: gemini-2.5-flash) ⭐ **DEFAULT**
-- `openai` - GPT models (default: gpt-3.5-turbo)
-- `anthropic` - Claude models (default: claude-3-sonnet)
-
-## 📁 Project Structure
-
-```
-rag_pipeline/
-├── main.py              # Main entry point
-├── examples.py          # Usage examples
-├── setup.sh             # Quick setup script
-├── requirements.txt     # Dependencies
-├── .env                 # Your API keys
-├── data/                # Your PDF/audio files
-├── chroma_db/           # Vector database (auto-created)
-└── modules/             # Core components
-    ├── pdf_loader.py
-    ├── audio_transcriber.py
-    ├── text_chunker.py
-    ├── vector_database.py
-    └── rag_system.py
-```
-
-## 🐍 Python API Usage
-
-```python
-from modules import RAGPipeline
-
-# Initialize
-pipeline = RAGPipeline()
-
-# Process data
-chunks = pipeline.load_pdf("data/document.pdf")
-pipeline.build_knowledge_base(chunks)
-
-# Query
-result = pipeline.query("Your question?")
-print(result['answer'])
-```
-
-## ⚡ Performance Tips
-
-1. **For faster audio transcription**: Use `whisper_model="tiny"`
-2. **For better quality**: Use `embedding_model="all-mpnet-base-v2"`
-3. **For less context**: Reduce chunk_size to 500-800
-4. **For more precise answers**: Retrieve 3-5 chunks
-5. **GPU acceleration**: Install CUDA-enabled PyTorch
-
-## 🔍 Troubleshooting
-
-### "Module not found"
+### 1. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### "API key not found"
+### 2. Set Up API Key
+Create a `.env` file:
 ```bash
-# Make sure .env exists and has your keys
-cat .env
+cp .env.example .env
 ```
 
-### "File not found"
-```bash
-# Check your files are in data/
-ls -la data/
+Edit `.env` and add at least one API key:
+```
+GOOGLE_API_KEY=your_actual_key_here
 ```
 
-### Reset everything
+### 3. Add Documents (Optional)
 ```bash
-rm -rf chroma_db/ venv/
-./setup.sh
+# Place PDF files in data/ directory
+cp your_documents.pdf data/
 ```
 
-## 📊 Example Queries
+### 4. Run the Agent
+```bash
+python run_agent.py
+```
 
-- "What is the main topic discussed?"
-- "Summarize the key points"
-- "Who are the main people mentioned?"
-- "What conclusions were reached?"
-- "Explain the methodology used"
-- "What are the practical applications?"
+## First Tasks to Try
 
-## 🎯 Assignment Requirements Check
+Once running, try these commands:
 
-✅ **1. Load and Process Data**
-   - PDF: `modules/pdf_loader.py`
-   - Audio: `modules/audio_transcriber.py` (Whisper)
+### Simple Q&A
+```
+🤖 Task: What is artificial intelligence?
+```
 
-✅ **2. Chunk the Text**
-   - `modules/text_chunker.py` (semantic chunking)
+### Generate Content
+```
+🤖 Task: Create a short social media post about machine learning
+```
 
-✅ **3. Embed and Store**
-   - Embeddings: Sentence Transformers
-   - Database: ChromaDB (`modules/vector_database.py`)
+### Check System
+```
+🤖 Task: tools
+🤖 Task: stats
+```
 
-✅ **4. Retrieve and Generate**
-   - `modules/rag_system.py` (complete RAG)
+## Command-Line Options
 
-## 📝 Next Steps
+```bash
+# Use different LLM provider
+python run_agent.py --llm openai
 
-1. Add your PDF and audio files to `data/`
-2. Configure your API keys in `.env`
-3. Run: `python main.py --interactive`
-4. Start asking questions!
+# Specify model
+python run_agent.py --llm openai --model gpt-4
 
-## 📚 Documentation
+# Custom data directory
+python run_agent.py --data-dir ./my_docs
 
-Full documentation: See [README.md](README.md)
-Code examples: See [examples.py](examples.py)
+# See all options
+python run_agent.py --help
+```
+
+## Getting API Keys
+
+### Google Gemini (Free & Recommended)
+1. Go to: https://makersuite.google.com/app/apikey
+2. Sign in with Google account
+3. Click "Create API Key"
+4. Copy key to `.env`
+
+### OpenAI
+1. Go to: https://platform.openai.com/api-keys
+2. Sign up/Login
+3. Create new secret key
+4. Copy to `.env`
+
+### Anthropic Claude
+1. Go to: https://console.anthropic.com/
+2. Sign up/Login
+3. Settings → API Keys → Create Key
+4. Copy to `.env`
+
+## Email Setup (Optional)
+
+For Gmail:
+1. Enable 2-factor authentication
+2. Go to: https://myaccount.google.com/apppasswords
+3. Create app password
+4. Add to `.env`:
+```
+SENDER_EMAIL=your_email@gmail.com
+SENDER_PASSWORD=your_app_password
+```
+
+## Troubleshooting
+
+**"API key not found"**
+- Check `.env` file exists
+- Verify key is correct
+- No spaces around `=`
+
+**"No module named..."**
+- Run: `pip install -r requirements.txt`
+
+**"Vector database error"**
+- Delete `chroma_db` folder
+- Restart agent
+
+## What Next?
+
+- Read full documentation: [README.md](README.md)
+- View architecture: [architecture.mmd](architecture.mmd)
+- Check examples in the README
+
+## Examples
+
+### Generate and Email Newsletter
+```
+🤖 Task: Create a newsletter about neural networks and email it to student@example.com
+```
+
+### Create HTML Page
+```
+🤖 Task: Generate an HTML page about deep learning
+```
+
+### Knowledge Base Query
+```
+🤖 Task: What are the key concepts in the documents?
+```
+
+---
+
+**Need help?** Check [README.md](README.md) for detailed documentation.

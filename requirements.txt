@@ -20,9 +20,17 @@ chromadb==0.4.22
 # Embeddings
 openai==1.10.0
 
-# LLM
+# LLM Providers
 anthropic==0.18.1
 google-generativeai==0.3.2
+
+# Email Support
+# Note: smtplib is built into Python, no additional package needed
+
+# Content Generation
+# For potential future PDF generation (optional)
+# reportlab>=4.0.0
+# fpdf2>=2.7.0
 
 # Utilities
 python-dotenv==1.0.1

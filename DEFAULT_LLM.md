@@ -1,8 +1,10 @@
 # Default LLM Configuration
 
+> **Note**: This document describes LLM configuration for the **RAG Pipeline**. For the AI Agentic System, see [README.md](README.md).
+
 ## 🎯 Google Gemini is the Default LLM
 
-As of this configuration, **Google Gemini** is set as the default LLM provider for the RAG pipeline.
+As of this configuration, **Google Gemini** is set as the default LLM provider for both the RAG pipeline and the agentic system.
 
 ### Why Gemini as Default?
 
@@ -21,17 +23,30 @@ Default Model: gemini-2.5-flash
 
 You can easily switch to a different provider:
 
-### Command Line
+### RAG Pipeline
 
 ```bash
 # Use default (Gemini)
-python main.py --interactive
+python run_pipeline.py --interactive
 
 # Switch to OpenAI
-python main.py --llm openai --interactive
+python run_pipeline.py --llm openai --interactive
 
 # Switch to Anthropic Claude
-python main.py --llm anthropic --interactive
+python run_pipeline.py --llm anthropic --interactive
+```
+
+### Agentic System
+
+```bash
+# Use default (Gemini)
+python run_agent.py
+
+# Switch to OpenAI
+python run_agent.py --llm openai
+
+# Switch to Anthropic Claude
+python run_agent.py --llm anthropic
 ```
 
 ### In Python Code

@@ -1,389 +1,338 @@
-# RAG Pipeline - Retrieval-Augmented Generation System
+# 🤖 AI Agentic Educational Assistant
 
-A complete RAG (Retrieval-Augmented Generation) pipeline in Python that processes PDFs and audio files, creates embeddings, stores them in a vector database, and enables intelligent question-answering using LLMs.
+An intelligent AI agent system that combines **Retrieval-Augmented Generation (RAG)**, **autonomous reasoning**, **tool-based actions**, **self-reflection**, and **performance evaluation** to create an educational assistant capable of answering questions, generating content, and taking meaningful actions.
 
-## Features
+## 🌟 Features
 
-✨ **Complete Pipeline Components:**
-- 📄 PDF text extraction
-- 🎵 Audio transcription using OpenAI Whisper
-- 🎬 MP4 video audio extraction and transcription
-- ✂️ Smart text chunking with overlap
-- 🔢 Vector embeddings using Sentence Transformers
-- 💾 ChromaDB vector database for efficient similarity search
-- 🤖 LLM integration (Google Gemini / OpenAI GPT / Anthropic Claude) for answer generation
-- 🔍 Semantic search and retrieval
+### Core Agentic Capabilities
 
-## Project Structure
+1. **🧠 Reasoning & Planning**
+   - Autonomous task understanding and breakdown
+   - Step-by-step planning before execution
+   - Intelligent tool selection based on task requirements
+
+2. **🔧 Tool-Based Actions**
+   - RAG query for knowledge base retrieval
+   - Content generation (blog posts, newsletters, HTML pages)
+   - Email sending capabilities
+   - Knowledge search without generation
+
+3. **🔍 Reflection & Self-Correction**
+   - Automatic evaluation of actions and outcomes
+   - Identification of strengths and weaknesses
+   - Alternative approach suggestions for failures
+
+4. **📊 Evaluation & Metrics**
+   - Real-time performance tracking
+   - Success rate monitoring
+   - Quality scoring (efficiency, tool usage, reflection quality)
+   - Comprehensive evaluation reports
+
+5. **📚 RAG Pipeline**
+   - PDF document processing
+   - Semantic chunking and embedding
+   - Vector database storage (ChromaDB)
+   - Context-aware answer generation
+
+## 🏗️ Architecture
+
+The system follows a modular architecture with clear separation of concerns:
 
 ```
-rag_pipeline/
-├── main.py                      # Main pipeline orchestrator
-├── requirements.txt             # Python dependencies
-├── .env.example                 # Example environment configuration
-├── .gitignore                   # Git ignore rules
-├── README.md                    # This file
-├── data/                        # Place your PDF and audio files here
-│   ├── *.pdf
-│   └── *.mp3, *.wav, etc.
-└── modules/
-    ├── __init__.py
-    ├── pdf_loader.py            # PDF text extraction
-    ├── audio_transcriber.py     # Audio to text transcription
-    ├── text_chunker.py          # Text chunking logic
-    ├── vector_database.py       # Vector DB and embeddings
-    └── rag_system.py            # RAG query and generation
+User Input → Reasoning → Tool Selection → Execution → Reflection → Evaluation → Output
 ```
 
-## Installation
+See [architecture.mmd](architecture.mmd) for detailed component diagram.
 
-### 1. Prerequisites
+### Key Components
 
-- Python 3.8 or higher
-- pip package manager
-- **ffmpeg** (required for audio/video processing)
-- (Optional) GPU with CUDA for faster audio transcription
+- **Agent Orchestrator** (`agent.py`): Main coordination logic
+- **Reasoning Module** (`modules/agent_reasoning.py`): Think, plan, reflect
+- **Tool Registry** (`modules/agent_tools.py`): Tool management and execution
+- **Content Tools** (`modules/content_tools.py`): Content generation capabilities
+- **Email Tool** (`modules/email_tool.py`): Email sending functionality
+- **Evaluator** (`modules/agent_evaluator.py`): Performance measurement
+- **RAG System** (`modules/rag_system.py`): Retrieval and generation
 
-**Install ffmpeg:**
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Python 3.8+
+- API key for at least one LLM provider:
+  - Google Gemini (recommended, default)
+  - OpenAI
+  - Anthropic Claude
+
+### Installation
+
+1. **Clone or navigate to the project:**
 ```bash
-# macOS
-brew install ffmpeg
-
-# Ubuntu/Debian
-sudo apt-get install ffmpeg
-
-# Windows
-# Download from https://ffmpeg.org/download.html
+cd ai_agentic_system
 ```
 
-### 2. Clone or Navigate to Project
-
-```bash
-git clone https://github.com/novotnyradekcz/rag-pipeline
-cd rag-pipeline
-```
-
-### 3. Create Virtual Environment
-
-```bash
-python -m venv venv
-
-# Activate on macOS/Linux:
-source venv/bin/activate
-
-# Activate on Windows:
-# venv\Scripts\activate
-```
-
-### 4. Install Dependencies
-
+2. **Install dependencies:**
 ```bash
 pip install -r requirements.txt
 ```
 
-**Note:** Installing Whisper and PyTorch may take some time. If you have a GPU, install the CUDA version of PyTorch for faster transcription:
-
-```bash
-# For CUDA 11.8 (check your CUDA version):
-pip install torch==2.1.2+cu118 torchaudio==2.1.2+cu118 -f https://download.pytorch.org/whl/torch_stable.html
-```
-
-### 5. Configure API Keys
+3. **Set up environment variables:**
 
 Create a `.env` file in the project root:
 
 ```bash
-cp .env.example .env
+# LLM API Keys (at least one required)
+GOOGLE_API_KEY=your_google_api_key_here
+OPENAI_API_KEY=your_openai_api_key_here
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
+
+# Email Configuration (optional, for email sending tool)
+SENDER_EMAIL=your_email@gmail.com
+SENDER_PASSWORD=your_app_password
+SMTP_SERVER=smtp.gmail.com
+SMTP_PORT=587
 ```
 
-Edit `.env` and add your API keys:
-
-```
-OPENAI_API_KEY=sk-your-openai-key-here
-ANTHROPIC_API_KEY=sk-ant-your-anthropic-key-here
-GOOGLE_API_KEY=your-google-api-key-here
-```
-
-**You need at least one LLM API key** for answer generation. The pipeline uses **Google Gemini by default** (you can also use OpenAI or Anthropic).
-
-## Usage
-
-### Prepare Your Data
-
-Place your PDF and audio files in the `data/` directory:
-
+4. **Add your documents to the data folder:**
 ```bash
-# Example:
-data/
-├── research_paper.pdf
-├── lecture_recording.mp3
-├── video_lecture.mp4
-└── notes.pdf
+# Place PDF files in the data/ directory
+cp your_documents.pdf data/
 ```
 
-### Basic Usage
+### Running the Agent
 
-#### 1. Process All Files in Data Directory
-
+**Basic usage with Google Gemini (default):**
 ```bash
-python main.py
+python run_agent.py
 ```
 
-This will:
-- Load all PDFs and audio files from `data/`
-- Extract/transcribe text
-- Create chunks
-- Generate embeddings
-- Store in vector database
-
-#### 2. Ask a Question
-
+**Use OpenAI:**
 ```bash
-python main.py --query "What is the main topic discussed?"
+python run_agent.py --llm openai --model gpt-4
 ```
 
-#### 3. Interactive Q&A Mode
-
+**Use Anthropic Claude:**
 ```bash
-python main.py --interactive
+python run_agent.py --llm anthropic --model claude-3-opus-20240229
 ```
 
-Then type your questions interactively. Type `quit` to exit.
-
-### Advanced Usage
-
-#### Process Specific Files
-
+**Custom data directory:**
 ```bash
-# Process only a specific PDF
-python main.py --pdf data/research_paper.pdf --query "What are the key findings?"
-
-# Process only a specific audio file
-python main.py --audio data/lecture.mp3 --query "What topics were covered?"
+python run_agent.py --data-dir ./my_documents
 ```
 
-#### Use Different LLM Provider
+## 💡 Usage Examples
 
-```bash
-# Default is Google Gemini
-python main.py --interactive
+Once the agent is running in interactive mode, you can give it various tasks:
 
-# Use OpenAI GPT instead
-python main.py --llm openai --interactive
-
-# Use Anthropic Claude
-python main.py --llm anthropic --interactive
+### Knowledge Base Queries
+```
+🤖 Task: What is machine learning?
+🤖 Task: Explain neural networks in simple terms
 ```
 
-#### Reset Vector Database
-
-```bash
-# Clear the database and reprocess everything
-python main.py --reset
+### Content Generation
+```
+🤖 Task: Create a professional blog post about artificial intelligence
+🤖 Task: Generate a social media post about deep learning
+🤖 Task: Write a newsletter about the latest AI trends
+🤖 Task: Create an HTML page about natural language processing
 ```
 
-#### Specify Custom Data Directory
-
-```bash
-python main.py --data-dir /path/to/your/files --interactive
+### Combined Actions
+```
+🤖 Task: Create a newsletter about machine learning and email it to student@example.com
+🤖 Task: Generate a technical blog post about transformers
 ```
 
-## How It Works
-
-### 1. Data Loading and Processing
-
-**PDFs:** The pipeline uses PyPDF2 to extract text from PDF documents page by page.
-
-**Audio:** OpenAI's Whisper model transcribes audio recordings to text. The default model is `base` (good balance of speed and accuracy).
-
-### 2. Text Chunking
-
-Text is split into overlapping chunks using LangChain's `RecursiveCharacterTextSplitter`:
-- Default chunk size: 1000 characters
-- Default overlap: 200 characters
-- Splits on paragraphs, sentences, then words to maintain semantic meaning
-
-### 3. Embedding Generation
-
-Uses Sentence Transformers (`all-MiniLM-L6-v2` by default) to convert text chunks into 384-dimensional vectors. This model provides a good balance of speed and quality.
-
-### 4. Vector Database Storage
-
-ChromaDB stores the embeddings with metadata. It uses cosine similarity for efficient semantic search.
-
-### 5. Retrieval and Generation
-
-When you ask a question:
-1. Query is converted to a vector
-2. Top-k most similar chunks are retrieved from the database
-3. Retrieved context + your question are sent to the LLM
-4. LLM generates a contextual answer
-
-## Configuration Options
-
-### Customize in Code
-
-Edit `main.py` or create your own script:
-
-```python
-from modules import RAGPipeline
-
-pipeline = RAGPipeline(
-    collection_name="my_collection",     # Database collection name
-    chunk_size=800,                      # Smaller chunks
-    chunk_overlap=150,                   # Less overlap
-    embedding_model="all-mpnet-base-v2", # Better embeddings
-    whisper_model="small",               # Better transcription
-    llm_provider="gemini",               # Use Gemini
-    llm_model="gemini-2.5-flash"         # Specific model
-)
-
-# Process files
-chunks = pipeline.process_directory("./data")
-pipeline.build_knowledge_base(chunks)
-
-# Query
-result = pipeline.query("Your question here?", n_results=3)
-print(result['answer'])
+### System Commands
+```
+🤖 Task: tools          # List all available tools
+🤖 Task: stats          # Show performance statistics
+🤖 Task: save           # Save evaluation report
+🤖 Task: quit           # Exit the agent
 ```
 
-## Module Documentation
+## 🛠️ Available Tools
 
-### PDFLoader
-```python
-from modules.pdf_loader import PDFLoader
+The agent has access to the following tools:
 
-loader = PDFLoader("document.pdf")
-text = loader.extract_text()
+1. **rag_query**: Query the knowledge base with RAG
+2. **knowledge_search**: Search knowledge base (retrieval only)
+3. **generate_blog_post**: Create blog posts and social media content
+4. **generate_newsletter**: Generate newsletter-style content
+5. **generate_html**: Create HTML web pages
+6. **send_email**: Send emails with generated content
+
+## 📊 How It Works
+
+### Task Execution Flow
+
+1. **Reasoning Phase**
+   - Agent analyzes the task
+   - Breaks it into steps
+   - Identifies required tools
+   - Creates execution plan
+
+2. **Tool Selection**
+   - Evaluates available tools
+   - Selects most appropriate ones
+   - Determines execution sequence
+
+3. **Execution Phase**
+   - Runs selected tools with extracted parameters
+   - Handles errors gracefully
+   - Collects results
+
+4. **Reflection Phase**
+   - Analyzes outcomes
+   - Identifies successes and failures
+   - Suggests improvements
+   - Determines if retry is needed
+
+5. **Evaluation Phase**
+   - Measures task success
+   - Calculates quality scores
+   - Updates performance metrics
+   - Tracks tool usage
+
+## 🧪 Evaluation Metrics
+
+The system tracks the following metrics:
+
+- **Success Rate**: Percentage of successful task completions
+- **Efficiency Score**: How economically the agent uses reasoning steps
+- **Tool Usage Score**: Appropriateness of tool selection
+- **Reflection Quality**: Depth and usefulness of self-reflection
+- **Overall Performance**: Weighted combination of all metrics
+
+View metrics anytime with the `stats` command, or save a detailed report with `save`.
+
+## 📁 Project Structure
+
+```
+ai_agentic_system/
+├── run_agent.py              # Main entry point
+├── agent.py                  # Agentic system orchestrator
+├── run_pipeline.py           # Original RAG pipeline
+├── requirements.txt          # Dependencies
+├── architecture.mmd          # System architecture diagram
+├── README.md                 # This file
+├── .env                      # Environment variables (create this)
+│
+├── modules/
+│   ├── agent_reasoning.py    # Reasoning & reflection
+│   ├── agent_tools.py        # Tool framework & base tools
+│   ├── agent_evaluator.py    # Performance evaluation
+│   ├── content_tools.py      # Content generation tools
+│   ├── email_tool.py         # Email sending tool
+│   ├── rag_system.py         # RAG implementation
+│   ├── vector_database.py    # Vector DB (ChromaDB)
+│   ├── text_chunker.py       # Text chunking
+│   ├── pdf_loader.py         # PDF processing
+│   └── audio_transcriber.py  # Audio transcription
+│
+├── data/                     # Place your PDF documents here
+├── outputs/                  # Generated content (auto-created)
+└── logs/                     # Evaluation reports (auto-created)
 ```
 
-### AudioTranscriber
-```python
-from modules.audio_transcriber import AudioTranscriber
+## 🔧 Configuration
 
-transcriber = AudioTranscriber(model_size="base")
-result = transcriber.transcribe_audio("recording.mp3")
-print(result['text'])
-```
+### LLM Providers
 
-### TextChunker
-```python
-from modules.text_chunker import TextChunker
+The system supports three LLM providers with easy switching:
 
-chunker = TextChunker(chunk_size=1000, chunk_overlap=200)
-chunks = chunker.chunk_text(text, metadata={'source': 'document.pdf'})
-```
+**Google Gemini (Default)**
+- Fast and cost-effective
+- Model: `gemini-2.5-flash` (default) or `gemini-2.5-pro`
+- Requires: `GOOGLE_API_KEY`
 
-### VectorDatabase
-```python
-from modules.vector_database import VectorDatabase
+**OpenAI**
+- Industry standard
+- Models: `gpt-3.5-turbo`, `gpt-4`, `gpt-4-turbo`
+- Requires: `OPENAI_API_KEY`
 
-db = VectorDatabase(collection_name="my_docs")
-db.add_documents(chunks)
-results = db.query("search query", n_results=5)
-```
+**Anthropic Claude**
+- Strong reasoning capabilities
+- Models: `claude-3-sonnet-20240229`, `claude-3-opus-20240229`
+- Requires: `ANTHROPIC_API_KEY`
 
-### RAGSystem
-```python
-from modules.rag_system import RAGSystem
+### Email Configuration
 
-rag = RAGSystem(vector_db=db, llm_provider="gemini")
-result = rag.answer_question("What is discussed?")
-print(result['answer'])
-```
+For the email sending feature:
 
-## Troubleshooting
+1. Use an app-specific password (not your main password)
+2. For Gmail:
+   - Enable 2-factor authentication
+   - Generate app password at: https://myaccount.google.com/apppasswords
+3. Add credentials to `.env` file
 
-### Whisper Model Download
+## 🎯 Use Cases
 
-First run will download the Whisper model (~150MB for base model). Ensure you have a stable internet connection.
+### Educational Assistant
+- Answer student questions from course materials
+- Generate study guides and summaries
+- Create practice questions
 
-### Memory Issues
+### Content Creator
+- Generate blog posts from research papers
+- Create social media content
+- Produce newsletters
 
-If transcribing large audio files:
-- Use a smaller Whisper model: `whisper_model="tiny"`
-- Process audio in smaller segments
-- Close other applications
+### Knowledge Management
+- Search through documentation
+- Synthesize information from multiple sources
+- Create reference materials
 
-### API Rate Limits
+## 🔐 Security Notes
 
-If you hit OpenAI/Anthropic rate limits:
-- Add delays between requests
-- Use a lower tier model
-- Upgrade your API plan
+- Never commit your `.env` file
+- Use app-specific passwords for email
+- Keep API keys secure
+- Review generated content before publishing
 
-### ChromaDB Persistence
+## 📈 Future Enhancements
 
-The vector database is stored in `chroma_db/` directory. To start fresh:
-```bash
-rm -rf chroma_db/
-python main.py --reset
-```
+Potential improvements:
 
-## Performance Tips
+- [ ] PDF generation for reports and slides
+- [ ] Web browsing capability for real-time information
+- [ ] Multi-turn conversations with memory
+- [ ] Fine-tuning on specific educational domains
+- [ ] Web-based UI interface
+- [ ] Advanced scheduling and automation
+- [ ] Integration with more tools (databases, APIs)
+- [ ] Multi-modal support (images, audio)
 
-1. **Whisper Model Selection:**
-   - `tiny`: Fastest, least accurate
-   - `base`: Good default (recommended)
-   - `small`: Better accuracy, slower
-   - `medium`/`large`: Best accuracy, much slower
+## 🤝 Contributing
 
-2. **Embedding Model Selection:**
-   - `all-MiniLM-L6-v2`: Fast, good quality (default)
-   - `all-mpnet-base-v2`: Better quality, slower
-   - `multi-qa-MiniLM-L6-cos-v1`: Optimized for Q&A
+This is an educational project. Feel free to:
+- Add new tools
+- Improve reasoning algorithms
+- Enhance evaluation metrics
+- Add new content generation formats
 
-3. **Chunk Size:**
-   - Smaller (500-800): More precise retrieval, more chunks
-   - Larger (1000-1500): More context per chunk, fewer chunks
+## 📝 License
 
-4. **Number of Retrieved Chunks:**
-   - Start with 3-5 chunks
-   - Increase if answers lack context
-   - Decrease if answers become unfocused
+Educational project for AI Academy Capstone.
 
-## Example Workflow
+## 🙏 Acknowledgments
 
-```bash
-# 1. Setup
-cd rag_pipeline
-source venv/bin/activate
+Built on top of:
+- LangChain for text processing
+- ChromaDB for vector storage
+- Sentence Transformers for embeddings
+- OpenAI, Anthropic, and Google for LLM APIs
 
-# 2. Add your files to data/
-cp ~/my_document.pdf data/
-cp ~/lecture.mp3 data/
-
-# 3. Process and build knowledge base
-python main.py
-
-# 4. Ask questions
-python main.py --query "Summarize the key points"
-
-# 5. Interactive mode
-python main.py --interactive
-```
-
-## Dependencies
-
-Key libraries used:
-- **PyPDF2**: PDF text extraction
-- **openai-whisper**: Audio transcription
-- **moviepy**: MP4 audio extraction
-- **sentence-transformers**: Text embeddings
-- **chromadb**: Vector database
-- **langchain**: Text processing utilities
-- **openai**: OpenAI GPT API
-- **anthropic**: Anthropic Claude API
-- **google-generativeai**: Google Gemini API
-
-## License
-
-This project is for educational purposes (Ciklum AI Academy HW4).
-
-## Support
+## 📞 Support
 
 For issues or questions:
-1. Check the troubleshooting section
-2. Verify your API keys are correct
-3. Ensure all dependencies are installed
-4. Check that your data files are in the correct format
+1. Check the architecture diagram
+2. Review the evaluation logs
+3. Use the `tools` command to see available capabilities
+4. Check performance with `stats` command
+
+---
+
+**Happy Learning! 🚀**

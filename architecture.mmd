@@ -1,0 +1,89 @@
+```mermaid
+graph TB
+    %% Main Entry Point
+    User[User/CLI] --> RunAgent[run_agent.py]
+    
+    %% Knowledge Base Setup
+    RunAgent --> KB[Knowledge Base Setup]
+    KB --> DataLoader[PDF Loader]
+    DataLoader --> Chunker[Text Chunker]
+    Chunker --> VectorDB[(Vector Database<br/>ChromaDB)]
+    
+    %% Main Agent System
+    RunAgent --> Agent[Agentic System<br/>agent.py]
+    Agent --> LLM{LLM Provider}
+    LLM --> Gemini[Google Gemini<br/>Default]
+    LLM --> OpenAI[OpenAI GPT]
+    LLM --> Anthropic[Anthropic Claude]
+    
+    %% Core Components
+    Agent --> Reasoning[Reasoning Module<br/>agent_reasoning.py]
+    Agent --> Tools[Tool Registry<br/>agent_tools.py]
+    Agent --> RAG[RAG System<br/>rag_system.py]
+    Agent --> Evaluator[Evaluator<br/>agent_evaluator.py]
+    
+    %% Reasoning Capabilities
+    Reasoning --> Think[Think & Plan]
+    Reasoning --> Reflect[Reflect & Self-Correct]
+    Reasoning --> Critique[Critique Output]
+    Reasoning --> ToolSelect[Tool Selection]
+    
+    %% RAG System
+    RAG --> VectorDB
+    RAG --> LLM
+    
+    %% Tool Registry
+    Tools --> RAGTool[RAG Query Tool]
+    Tools --> SearchTool[Knowledge Search Tool]
+    Tools --> ContentTools[Content Generation Tools]
+    Tools --> EmailTool[Email Sender Tool]
+    
+    %% Content Generation Tools
+    ContentTools --> BlogGen[Blog Post Generator]
+    ContentTools --> NewsGen[Newsletter Generator]
+    ContentTools --> HTMLGen[HTML Page Generator]
+    
+    %% Tool Connections
+    RAGTool --> RAG
+    SearchTool --> VectorDB
+    BlogGen --> LLM
+    BlogGen --> RAG
+    NewsGen --> LLM
+    NewsGen --> RAG
+    HTMLGen --> LLM
+    HTMLGen --> RAG
+    EmailTool --> SMTP[SMTP Server]
+    
+    %% Evaluation Flow
+    Evaluator --> Metrics[Performance Metrics]
+    Evaluator --> Reports[Evaluation Reports]
+    Reports --> Logs[(logs/)]
+    
+    %% Output Generation
+    BlogGen --> OutputDir[(outputs/)]
+    NewsGen --> OutputDir
+    HTMLGen --> OutputDir
+    
+    %% Task Execution Flow
+    Agent --> TaskFlow{Task Execution Flow}
+    TaskFlow --> Step1[1. Reasoning<br/>Understand & Plan]
+    Step1 --> Step2[2. Tool Selection<br/>Choose Best Tools]
+    Step2 --> Step3[3. Execution<br/>Run Tools]
+    Step3 --> Step4[4. Reflection<br/>Self-Evaluate]
+    Step4 --> Step5[5. Evaluation<br/>Measure Success]
+    Step5 --> Result[Return Results]
+    Result --> User
+    
+    %% Styling
+    classDef agentClass fill:#667eea,stroke:#333,stroke-width:2px,color:#fff
+    classDef toolClass fill:#764ba2,stroke:#333,stroke-width:2px,color:#fff
+    classDef llmClass fill:#f093fb,stroke:#333,stroke-width:2px,color:#333
+    classDef dataClass fill:#4facfe,stroke:#333,stroke-width:2px,color:#fff
+    classDef flowClass fill:#43e97b,stroke:#333,stroke-width:2px,color:#333
+    
+    class Agent,Reasoning,Evaluator agentClass
+    class Tools,RAGTool,SearchTool,ContentTools,EmailTool,BlogGen,NewsGen,HTMLGen toolClass
+    class LLM,Gemini,OpenAI,Anthropic llmClass
+    class VectorDB,OutputDir,Logs dataClass
+    class Step1,Step2,Step3,Step4,Step5 flowClass
+```
