@@ -5,6 +5,10 @@ env/
 __pycache__/
 *.pyc
 
+# Gmail OAuth2 credentials and tokens
+credentials.json
+token.json
+
 # Data
 data/*.pdf
 data/*.txt
@@ -21,6 +25,7 @@ chroma_db/
 # Logs (keep directory structure but ignore log files)
 logs/*.txt
 logs/*.log
+logs/*.json
 !logs/README.md
 
 # IDE

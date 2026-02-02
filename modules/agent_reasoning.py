@@ -26,7 +26,30 @@ class AgentReasoning:
         self.model_name = model_name
         self.temperature = temperature
         self.reasoning_history = []
+    
+    def _clean_json_response(self, response_text: str) -> str:
+        """
+        Clean LLM response by removing markdown code blocks.
         
+        Args:
+            response_text: Raw response from LLM
+            
+        Returns:
+            Cleaned JSON string
+        """
+        response_text = response_text.strip()
+        
+        # Remove markdown code blocks
+        if response_text.startswith("```json"):
+            response_text = response_text[7:]
+        elif response_text.startswith("```"):
+            response_text = response_text[3:]
+        
+        if response_text.endswith("```"):
+            response_text = response_text[:-3]
+        
+        return response_text.strip()
+    
     def think(self, task: str, context: Optional[str] = None) -> Dict[str, Any]:
         """
         Perform reasoning about a task.
@@ -64,6 +87,7 @@ Respond in JSON format with the following structure:
         
         # Parse JSON response
         try:
+            response_text = self._clean_json_response(response_text)
             reasoning = json.loads(response_text)
         except json.JSONDecodeError:
             # Fallback if LLM doesn't return proper JSON
@@ -123,6 +147,7 @@ Result: {result}"""
         response_text = self._call_llm(system_prompt, user_message)
         
         try:
+            response_text = self._clean_json_response(response_text)
             reflection = json.loads(response_text)
         except json.JSONDecodeError:
             reflection = {
@@ -174,6 +199,7 @@ Respond in JSON format:
         response_text = self._call_llm(system_prompt, user_message)
         
         try:
+            response_text = self._clean_json_response(response_text)
             tool_choice = json.loads(response_text)
         except json.JSONDecodeError:
             tool_choice = {
@@ -229,6 +255,7 @@ Output to Evaluate:
         response_text = self._call_llm(system_prompt, user_message)
         
         try:
+            response_text = self._clean_json_response(response_text)
             critique = json.loads(response_text)
         except json.JSONDecodeError:
             critique = {

@@ -50,9 +50,18 @@ See [architecture.mmd](architecture.mmd) for detailed component diagram.
 - **Reasoning Module** (`modules/agent_reasoning.py`): Think, plan, reflect
 - **Tool Registry** (`modules/agent_tools.py`): Tool management and execution
 - **Content Tools** (`modules/content_tools.py`): Content generation capabilities
-- **Email Tool** (`modules/email_tool.py`): Email sending functionality
+- **Email Tool** (`modules/email_tool.py`): Secure email via Gmail API with OAuth2
 - **Evaluator** (`modules/agent_evaluator.py`): Performance measurement
 - **RAG System** (`modules/rag_system.py`): Retrieval and generation
+
+## 🔒 Security
+
+This system implements secure practices:
+
+- **OAuth2 Authentication**: Email sending uses Gmail API with OAuth2 (no passwords stored)
+- **Credential Protection**: Sensitive files (`credentials.json`, `token.json`, `.env`) are automatically excluded from version control via `.gitignore`
+- **API Key Management**: LLM API keys stored in `.env` file (not in code)
+- **Token Refresh**: OAuth2 tokens automatically refresh without re-authentication
 
 ## 🚀 Quick Start
 
@@ -85,15 +94,37 @@ Create a `.env` file in the project root:
 GOOGLE_API_KEY=your_google_api_key_here
 OPENAI_API_KEY=your_openai_api_key_here
 ANTHROPIC_API_KEY=your_anthropic_api_key_here
-
-# Email Configuration (optional, for email sending tool)
-SENDER_EMAIL=your_email@gmail.com
-SENDER_PASSWORD=your_app_password
-SMTP_SERVER=smtp.gmail.com
-SMTP_PORT=587
 ```
 
-4. **Add your documents to the data folder:**
+4. **Set up Gmail API for email sending (optional):**
+
+If you want to use the email sending feature, you need to set up OAuth2 authentication with Gmail API:
+
+**a. Create a Google Cloud Project:**
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a new project or select an existing one
+   - Enable the Gmail API:
+     - Navigate to "APIs & Services" → "Library"
+     - Search for "Gmail API" and enable it
+
+**b. Create OAuth2 Credentials:**
+   - Go to "APIs & Services" → "Credentials"
+   - Click "Create Credentials" → "OAuth client ID"
+   - Choose "Desktop app" as the application type
+   - Download the credentials JSON file
+   - Save it as `credentials.json` in the project root directory
+   - (See `credentials.json.example` for expected structure)
+
+**c. First-time authentication:**
+   - Run the test script: `python test_gmail_oauth.py`
+   - Or wait for first email task - a browser window will open automatically
+   - Sign in with your Gmail account
+   - Grant the necessary permissions
+   - A `token.json` file will be created automatically for future use
+
+> **Note:** Both `credentials.json` and `token.json` are automatically excluded from git via `.gitignore` for security.
+
+5. **Add your documents to the data folder:**
 ```bash
 # Place PDF files in the data/ directory
 cp your_documents.pdf data/

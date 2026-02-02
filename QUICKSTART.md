@@ -85,17 +85,28 @@ python run_agent.py --help
 3. Settings → API Keys → Create Key
 4. Copy to `.env`
 
-## Email Setup (Optional)
+## Gmail OAuth2 Setup (Optional)
 
-For Gmail:
-1. Enable 2-factor authentication
-2. Go to: https://myaccount.google.com/apppasswords
-3. Create app password
-4. Add to `.env`:
-```
-SENDER_EMAIL=your_email@gmail.com
-SENDER_PASSWORD=your_app_password
-```
+For email sending with Gmail API:
+
+1. **Create Google Cloud Project:**
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create/select project
+   - Enable Gmail API
+
+2. **Create OAuth2 Credentials:**
+   - APIs & Services → Credentials
+   - Create Credentials → OAuth client ID
+   - Choose "Desktop app"
+   - Download as `credentials.json` (save in project root)
+
+3. **First-time authentication:**
+   - Run the test script: `python test_gmail_oauth.py`
+   - Browser will open for Gmail authorization
+   - Sign in and grant permissions
+   - `token.json` will be created automatically
+
+> **Security:** Both `credentials.json` and `token.json` are excluded from git.
 
 ## Troubleshooting
 
@@ -110,6 +121,12 @@ SENDER_PASSWORD=your_app_password
 **"Vector database error"**
 - Delete `chroma_db` folder
 - Restart agent
+
+**"Gmail authentication failed"**
+- Ensure Gmail API is enabled in Google Cloud Console
+- Delete `token.json` and re-authenticate
+- Check `credentials.json` is valid and in project root
+- Run `python test_gmail_oauth.py` to test setup
 
 ## What Next?
 

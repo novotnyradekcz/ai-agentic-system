@@ -12,10 +12,28 @@ from agent import AgenticSystem
 from modules.vector_database import VectorDatabase
 
 
-def example_simple_query():
-    """Example 1: Simple knowledge base query."""
+def example_system_identity():
+    """Example 1: Ask the agent about itself."""
     print("\n" + "="*80)
-    print("EXAMPLE 1: Simple Knowledge Base Query")
+    print("EXAMPLE 1: System Identity")
+    print("="*80)
+    
+    # Initialize components
+    vector_db = VectorDatabase(collection_name="demo_kb")
+    agent = AgenticSystem(vector_db=vector_db, llm_provider="gemini")
+    
+    # Ask about the agent itself
+    result = agent.execute_task("Who are you and what can you do?")
+    
+    # The agent automatically recognizes this as a self-inquiry
+    # and responds with its identity and capabilities
+    agent._display_results(result)
+
+
+def example_simple_query():
+    """Example 2: Simple knowledge base query."""
+    print("\n" + "="*80)
+    print("EXAMPLE 2: Simple Knowledge Base Query")
     print("="*80)
     
     # Initialize components
@@ -32,9 +50,9 @@ def example_simple_query():
 
 
 def example_content_generation():
-    """Example 2: Generate blog post."""
+    """Example 3: Generate blog post."""
     print("\n" + "="*80)
-    print("EXAMPLE 2: Content Generation")
+    print("EXAMPLE 3: Content Generation")
     print("="*80)
     
     vector_db = VectorDatabase(collection_name="demo_kb")
@@ -54,9 +72,9 @@ def example_content_generation():
 
 
 def example_with_reflection():
-    """Example 3: Task execution with reflection analysis."""
+    """Example 4: Task execution with reflection analysis."""
     print("\n" + "="*80)
-    print("EXAMPLE 3: Task with Reflection")
+    print("EXAMPLE 4: Task with Reflection")
     print("="*80)
     
     vector_db = VectorDatabase(collection_name="demo_kb")
@@ -149,6 +167,8 @@ def run_all_examples():
     """Run all examples sequentially."""
     examples = [
         ("Simple Query", example_simple_query),
+        ("System Identity", example_system_identity),
+        ("Simple Query", example_simple_query),
         ("Content Generation", example_content_generation),
         ("With Reflection", example_with_reflection),
         ("Reasoning Inspection", example_reasoning_inspection),
@@ -178,7 +198,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--example',
         type=int,
-        choices=range(1, 7),
+        choices=range(1, 8),
         help='Run specific example (1-6), or omit to run all'
     )
     

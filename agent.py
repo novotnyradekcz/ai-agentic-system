@@ -35,6 +35,33 @@ class AgenticSystem:
     Main AI Agentic System that combines reasoning, tool-calling, and reflection.
     """
     
+    # System identity and capabilities description
+    SYSTEM_IDENTITY = """I am an AI Agentic System - an advanced autonomous assistant that combines reasoning, tool-calling, and self-reflection to accomplish complex tasks.
+
+**Created as part of the Ciklum AI Academy** - a capstone project demonstrating modern agentic AI architecture and RAG technology.
+
+My core capabilities include:
+
+🧠 **Autonomous Reasoning**: I think through problems step-by-step, planning my approach before taking action.
+
+🛠️ **Tool-Based Actions**: I have access to several specialized tools:
+   • RAG Query - Answer questions using a knowledge base with source citations
+   • Knowledge Search - Retrieve relevant information from stored documents
+   • Blog Post Generator - Create professional blog posts in various styles (technical, casual, tutorial, storytelling)
+   • Newsletter Generator - Produce engaging newsletters with structured sections
+   • HTML Page Generator - Build complete HTML pages with styling
+   • Email Sender - Send emails securely via Gmail API with OAuth2
+
+🔍 **Self-Reflection**: After completing tasks, I evaluate my performance and learn from the outcomes.
+
+📊 **Performance Tracking**: I maintain metrics on my success rate, efficiency, and tool usage to continuously improve.
+
+💬 **Interactive Dialogue**: I can engage in natural conversation while working on your tasks, explaining my reasoning and asking for clarification when needed.
+
+I'm designed to handle diverse tasks - from answering questions and conducting research to generating content and automating communications. I approach each task methodically: first reasoning about the best approach, selecting appropriate tools, executing actions, reflecting on results, and evaluating my performance.
+
+How can I help you today?"""
+    
     def __init__(
         self,
         vector_db: VectorDatabase,
@@ -135,6 +162,60 @@ class AgenticSystem:
         
         print(f"✓ Registered {len(self.tools.list_tools())} tools")
     
+    def _is_self_inquiry(self, task: str) -> bool:
+        """
+        Check if the user is asking about the agent itself.
+        
+        Args:
+            task: User's input
+            
+        Returns:
+            True if the task is about the agent's identity or capabilities
+        """
+        task_lower = task.lower().strip()
+        
+        # Patterns that indicate self-inquiry
+        self_inquiry_patterns = [
+            "who are you",
+            "what are you",
+            "what can you do",
+            "what do you do",
+            "tell me about yourself",
+            "describe yourself",
+            "what are your capabilities",
+            "what are your abilities",
+            "how do you work",
+            "what is your purpose",
+            "introduce yourself",
+            "what can you help with",
+            "what can you help me with"
+        ]
+        
+        return any(pattern in task_lower for pattern in self_inquiry_patterns)
+    
+    def _respond_with_identity(self) -> Dict[str, Any]:
+        """
+        Provide the system's identity and capabilities.
+        
+        Returns:
+            Result dictionary with identity information
+        """
+        return {
+            "task": "System identity inquiry",
+            "reasoning": {"approach": "Direct system message"},
+            "tool_selection": {"selected_tools": []},
+            "execution_results": [{
+                "tool": "system_identity",
+                "result": {
+                    "success": True,
+                    "result": self.SYSTEM_IDENTITY
+                }
+            }],
+            "reflection": {"success": True, "analysis": "Provided system identity"},
+            "evaluation": {"overall": 1.0},
+            "timestamp": datetime.now().isoformat()
+        }
+    
     def execute_task(self, task: str, auto_reflect: bool = True) -> Dict[str, Any]:
         """
         Execute a task with full agentic capabilities: reasoning, tool-calling, and reflection.
@@ -146,6 +227,10 @@ class AgenticSystem:
         Returns:
             Dictionary with execution results and metadata
         """
+        # Check if user is asking about the agent itself
+        if self._is_self_inquiry(task):
+            return self._respond_with_identity()
+        
         print(f"\n{'='*80}")
         print(f"TASK: {task}")
         print(f"{'='*80}\n")
@@ -390,6 +475,7 @@ Provide clear, concise, and accurate answers to questions."""
         print("  - 'save' - Save evaluation report")
         print("  - 'quit' - Exit")
         print("\nExamples:")
+        print("  • Who are you? / What can you do?")
         print("  • What is machine learning?")
         print("  • Create a blog post about neural networks")
         print("  • Generate a newsletter about AI and email it to user@example.com")
@@ -451,7 +537,10 @@ Provide clear, concise, and accurate answers to questions."""
             if tool_result.get("success"):
                 content = tool_result.get("result", {})
                 
-                if tool == "rag_query":
+                if tool == "system_identity":
+                    print(f"\n{content}")
+                
+                elif tool == "rag_query":
                     print(f"\n💡 Answer: {content.get('answer', 'N/A')}")
                     sources = content.get('sources', [])
                     if sources:
