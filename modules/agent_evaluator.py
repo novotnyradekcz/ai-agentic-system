@@ -247,12 +247,16 @@ class AgentEvaluator:
         }
     
     def save_evaluation_report(self, filepath: Optional[str] = None):
-        """Save evaluation report to file."""
+        """Save evaluation report to file in both JSON and human-readable text formats."""
         if filepath is None:
             output_dir = Path(__file__).parent.parent / "logs"
             output_dir.mkdir(exist_ok=True)
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filepath = output_dir / f"evaluation_report_{timestamp}.json"
+            json_filepath = output_dir / f"evaluation_report_{timestamp}.json"
+            txt_filepath = output_dir / f"evaluation_report_{timestamp}.txt"
+        else:
+            json_filepath = Path(filepath)
+            txt_filepath = json_filepath.with_suffix('.txt')
         
         report = {
             "timestamp": datetime.now().isoformat(),
@@ -260,11 +264,76 @@ class AgentEvaluator:
             "detailed_metrics": self.metrics
         }
         
-        with open(filepath, 'w', encoding='utf-8') as f:
+        # Save JSON version
+        with open(json_filepath, 'w', encoding='utf-8') as f:
             json.dump(report, f, indent=2)
         
-        print(f"\n✓ Evaluation report saved to: {filepath}")
-        return filepath
+        # Save human-readable text version
+        self._save_text_report(txt_filepath, report)
+        
+        print(f"\n✓ Evaluation reports saved:")
+        print(f"   JSON: {json_filepath}")
+        print(f"   Text: {txt_filepath}")
+        return json_filepath
+    
+    def _save_text_report(self, filepath: Path, report: dict):
+        """Generate and save a human-readable text version of the report."""
+        summary = report['summary']
+        
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write("="*80 + "\n")
+            f.write("AGENT PERFORMANCE EVALUATION REPORT\n")
+            f.write("="*80 + "\n")
+            f.write(f"Generated: {report['timestamp']}\n")
+            f.write("="*80 + "\n\n")
+            
+            # Summary Section
+            f.write("SUMMARY\n")
+            f.write("-" * 80 + "\n")
+            f.write(f"Total Tasks Executed:       {summary['total_tasks']}\n")
+            f.write(f"Successful Tasks:           {int(summary['total_tasks'] * summary['success_rate'])}\n")
+            f.write(f"Success Rate:               {summary['success_rate']:.1%}\n")
+            f.write(f"Reflection Rate:            {summary['reflection_rate']:.1%}\n")
+            f.write(f"Average Reasoning Steps:    {summary['average_reasoning_steps']}\n\n")
+            
+            # Scores Section
+            f.write("AVERAGE SCORES\n")
+            f.write("-" * 80 + "\n")
+            f.write(f"Overall Quality:            {summary['average_scores']['overall']:.2f} / 1.00\n")
+            f.write(f"Efficiency:                 {summary['average_scores']['efficiency']:.2f} / 1.00\n")
+            f.write(f"Tool Usage:                 {summary['average_scores']['tool_usage']:.2f} / 1.00\n")
+            f.write(f"Reflection Quality:         {summary['average_scores']['reflection_quality']:.2f} / 1.00\n\n")
+            
+            # Tool Usage Section
+            f.write("TOOL USAGE STATISTICS\n")
+            f.write("-" * 80 + "\n")
+            f.write(f"Most Used Tool:             {summary['most_used_tool']}\n\n")
+            
+            # Detailed Metrics Section
+            task_history = report['detailed_metrics'].get('task_history', [])
+            if task_history:
+                f.write("DETAILED TASK METRICS\n")
+                f.write("=" * 80 + "\n\n")
+                
+                for i, task_record in enumerate(task_history, 1):
+                    f.write(f"Task #{i}\n")
+                    f.write("-" * 40 + "\n")
+                    f.write(f"Timestamp:          {task_record.get('timestamp', 'N/A')}\n")
+                    f.write(f"Task:               {task_record.get('task', 'N/A')[:60]}...\n")
+                    f.write(f"Success:            {'✓ Yes' if task_record.get('success', False) else '✗ No'}\n")
+                    f.write(f"Tools Used:         {', '.join(task_record.get('tools_used', []))}\n")
+                    
+                    scores = task_record.get('scores', {})
+                    if scores:
+                        f.write(f"Overall Score:      {scores.get('overall', 0):.2f}\n")
+                        f.write(f"Efficiency Score:   {scores.get('efficiency', 0):.2f}\n")
+                        f.write(f"Tool Usage Score:   {scores.get('tool_usage', 0):.2f}\n")
+                        f.write(f"Reflection Score:   {scores.get('reflection_quality', 0):.2f}\n")
+                    f.write("\n")
+            
+            f.write("="*80 + "\n")
+            f.write("END OF REPORT\n")
+            f.write("="*80 + "\n")
     
     def print_summary(self):
         """Print a formatted summary of performance."""

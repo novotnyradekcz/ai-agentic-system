@@ -122,7 +122,7 @@ class RAGQueryTool(Tool):
     
     @property
     def description(self) -> str:
-        return "Query the knowledge base to retrieve information. Use this when you need to find specific information from the loaded documents."
+        return "Answer questions using the knowledge base. Use this for ANY question - it retrieves relevant information and generates a comprehensive answer. This is the PRIMARY tool for answering user questions."
     
     @property
     def parameters(self) -> Dict[str, Any]:
@@ -169,7 +169,7 @@ class KnowledgeSearchTool(Tool):
     
     @property
     def description(self) -> str:
-        return "Search for relevant information in the knowledge base. Returns raw context chunks without generating an answer."
+        return "Search for document chunks without generating an answer. Only use this if explicitly asked to 'search' or 'find documents'. For answering questions, use rag_query instead."
     
     @property
     def parameters(self) -> Dict[str, Any]:

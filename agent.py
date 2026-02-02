@@ -689,12 +689,13 @@ Provide clear, concise, and accurate answers to questions."""
                             print(f"  {i}. {src.get('source', 'unknown')} (relevance: {src.get('relevance', 0):.2f})")
                 
                 elif tool == "knowledge_search":
-                    results = content.get('results', [])
+                    # knowledge_search returns a list directly as result
+                    results = content if isinstance(content, list) else []
                     print(f"\n🔍 Found {len(results)} relevant documents:")
                     for i, doc in enumerate(results[:5], 1):
-                        print(f"\n  {i}. {doc.get('source', 'unknown')} (relevance: {doc.get('score', 0):.2f})")
-                        preview = doc.get('text', '')[:150] + "..." if len(doc.get('text', '')) > 150 else doc.get('text', '')
-                        print(f"     {preview}")
+                        source = doc.get('source', 'unknown')
+                        relevance = doc.get('relevance', 0)
+                        print(f"\n  {i}. {source} (relevance: {relevance:.2f})")
                 
                 elif tool == "direct_answer":
                     print(f"\n💡 Answer: {content}")

@@ -187,11 +187,13 @@ Result: {result}"""
 Available tools: {', '.join(available_tools)}
 
 Analyze the task carefully and select ONLY the tool(s) that are explicitly needed.
+- If the user asks a QUESTION (what, why, how, explain, tell me about, etc.), use rag_query
 - If the user asks for ONE specific output (e.g., "create a PDF"), select ONLY that tool
 - Only select multiple tools if the task explicitly requires multiple actions (e.g., "create a PDF and email it")
 - generate_html creates HTML pages
 - generate_pdf creates PDF documents
 - DO NOT select both generate_html and generate_pdf unless explicitly asked for both
+- DO NOT use knowledge_search for questions - use rag_query instead
 
 Respond in JSON format:
 {{

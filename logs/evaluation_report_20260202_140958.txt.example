@@ -1,0 +1,64 @@
+================================================================================
+AGENT PERFORMANCE EVALUATION REPORT
+================================================================================
+Generated: 2026-02-02T14:09:58.240127
+================================================================================
+
+SUMMARY
+--------------------------------------------------------------------------------
+Total Tasks Executed:       3
+Successful Tasks:           3
+Success Rate:               100.0%
+Reflection Rate:            100.0%
+Average Reasoning Steps:    2.33
+
+AVERAGE SCORES
+--------------------------------------------------------------------------------
+Overall Quality:            0.75 / 1.00
+Efficiency:                 0.80 / 1.00
+Tool Usage:                 0.33 / 1.00
+Reflection Quality:         0.60 / 1.00
+
+TOOL USAGE STATISTICS
+--------------------------------------------------------------------------------
+Most Used Tool:             rag_query
+
+DETAILED TASK METRICS
+================================================================================
+
+Task #1
+----------------------------------------
+Timestamp:          2026-02-02T14:06:20.676974
+Task:               What is retrieval-augmented generation?...
+Success:            ✓ Yes
+Tools Used:         rag_query
+Overall Score:      0.83
+Efficiency Score:   1.00
+Tool Usage Score:   0.33
+Reflection Score:   0.80
+
+Task #2
+----------------------------------------
+Timestamp:          2026-02-02T14:07:14.463717
+Task:               What is machine learning?...
+Success:            ✓ Yes
+Tools Used:         rag_query
+Overall Score:      0.65
+Efficiency Score:   0.40
+Tool Usage Score:   0.33
+Reflection Score:   0.50
+
+Task #3
+----------------------------------------
+Timestamp:          2026-02-02T14:09:32.649023
+Task:               Create an HTML page about RAG...
+Success:            ✓ Yes
+Tools Used:         generate_html
+Overall Score:      0.77
+Efficiency Score:   1.00
+Tool Usage Score:   0.33
+Reflection Score:   0.50
+
+================================================================================
+END OF REPORT
+================================================================================
