@@ -1,58 +1,67 @@
 # 🤖 AI Agentic Educational Assistant
 
-An intelligent AI agent system that combines **Retrieval-Augmented Generation (RAG)**, **autonomous reasoning**, **tool-based actions**, **self-reflection**, and **performance evaluation** to create an educational assistant capable of answering questions, generating content, and taking meaningful actions.
+An intelligent AI agent system created as part of the **Ciklum AI Academy** capstone project. This system combines **Retrieval-Augmented Generation (RAG)**, **autonomous reasoning**, **tool-based actions**, and **self-reflection** to create a powerful educational assistant.
 
-## 🌟 Features
+## 🌟 Core Capabilities
 
-### Core Agentic Capabilities
+This system focuses on 4 essential capabilities:
 
-1. **🧠 Reasoning & Planning**
-   - Autonomous task understanding and breakdown
-   - Step-by-step planning before execution
-   - Intelligent tool selection based on task requirements
+### 📚 1. Question Answering (RAG)
+- Answer questions using documents from the `data/` folder
+- Semantic search with ChromaDB vector database
+- Context-aware responses with source citations
+- Supports both knowledge base and general knowledge questions
 
-2. **🔧 Tool-Based Actions**
-   - RAG query for knowledge base retrieval
-   - Content generation (blog posts, newsletters, HTML pages)
-   - Email sending capabilities
-   - Knowledge search without generation
+**Example:** *"What is retrieval-augmented generation?"*
 
-3. **🔍 Reflection & Self-Correction**
-   - Automatic evaluation of actions and outcomes
-   - Identification of strengths and weaknesses
-   - Alternative approach suggestions for failures
+### 📧 2. Email Communication
+- Draft and send emails via Gmail API with OAuth2
+- Intelligent content generation based on topic
+- Automatic subject line inference
+- Secure authentication (no passwords stored)
 
-4. **📊 Evaluation & Metrics**
-   - Real-time performance tracking
-   - Success rate monitoring
-   - Quality scoring (efficiency, tool usage, reflection quality)
-   - Comprehensive evaluation reports
+**Example:** *"Send an email about RAG to user@example.com"*
 
-5. **📚 RAG Pipeline**
-   - PDF document processing
-   - Semantic chunking and embedding
-   - Vector database storage (ChromaDB)
-   - Context-aware answer generation
+### 📄 3. PDF Document Creation
+- Generate professional PDF documents automatically saved to `outputs/` folder
+- 4 styles: report, guide, tutorial, whitepaper
+- Content from your data or general knowledge
+- Proper markdown formatting (headings, bold, italic, lists)
+
+**Example:** *"Create a PDF guide about machine learning"*
+
+### 🌐 4. HTML Page Generation
+- Build complete, styled HTML pages automatically saved to `outputs/` folder
+- Responsive design with gradient backgrounds
+- Content from your data or general knowledge
+- Proper markdown formatting (bold, italic, lists, links, code)
+
+**Example:** *"Create an HTML page about neural networks"*
 
 ## 🏗️ Architecture
 
-The system follows a modular architecture with clear separation of concerns:
+The system uses a 5-phase agentic process:
 
 ```
-User Input → Reasoning → Tool Selection → Execution → Reflection → Evaluation → Output
+User Input → 🧠 Reasoning → 🔧 Tool Selection → ⚡ Execution → 🔍 Reflection → 📊 Evaluation → Output
 ```
 
-See [architecture.mmd](architecture.mmd) for detailed component diagram.
+### Advanced Features
 
-### Key Components
+1. **🧠 Autonomous Reasoning**
+   - Task understanding and breakdown
+   - Step-by-step planning before execution
+   - Intelligent tool selection
 
-- **Agent Orchestrator** (`agent.py`): Main coordination logic
-- **Reasoning Module** (`modules/agent_reasoning.py`): Think, plan, reflect
-- **Tool Registry** (`modules/agent_tools.py`): Tool management and execution
-- **Content Tools** (`modules/content_tools.py`): Content generation capabilities
-- **Email Tool** (`modules/email_tool.py`): Secure email via Gmail API with OAuth2
-- **Evaluator** (`modules/agent_evaluator.py`): Performance measurement
-- **RAG System** (`modules/rag_system.py`): Retrieval and generation
+2. **🔍 Self-Reflection**
+   - Automatic evaluation of outcomes
+   - Identification of strengths and weaknesses
+   - Learning from results
+
+3. **📊 Performance Tracking**
+   - Real-time success rate monitoring
+   - Quality scoring and metrics
+   - Comprehensive evaluation reports
 
 ## 🔒 Security
 
@@ -156,44 +165,53 @@ python run_agent.py --data-dir ./my_documents
 
 Once the agent is running in interactive mode, you can give it various tasks:
 
-### Knowledge Base Queries
+### 📚 Question Answering
 ```
-🤖 Task: What is machine learning?
-🤖 Task: Explain neural networks in simple terms
-```
-
-### Content Generation
-```
-🤖 Task: Create a professional blog post about artificial intelligence
-🤖 Task: Generate a social media post about deep learning
-🤖 Task: Write a newsletter about the latest AI trends
-🤖 Task: Create an HTML page about natural language processing
+🤖 Task: What is retrieval-augmented generation?
+🤖 Task: Explain machine learning in simple terms
+🤖 Task: What are the benefits of RAG systems?
 ```
 
-### Combined Actions
+### 📧 Email Communication
 ```
-🤖 Task: Create a newsletter about machine learning and email it to student@example.com
-🤖 Task: Generate a technical blog post about transformers
+🤖 Task: Send an email about RAG to user@example.com
+🤖 Task: Email colleague@company.com introducing yourself
+🤖 Task: Send a short email about machine learning to student@university.edu
+```
+
+### 📄 PDF Creation (automatically saves to outputs/)
+```
+🤖 Task: Create a PDF guide about neural networks
+🤖 Task: Generate a PDF report on transformers
+🤖 Task: Make a PDF tutorial about RAG
+```
+
+### 🌐 HTML Page Generation (automatically saves to outputs/)
+```
+🤖 Task: Create an HTML page about artificial intelligence
+🤖 Task: Build an HTML page explaining deep learning
+🤖 Task: Generate an HTML page about vector databases
 ```
 
 ### System Commands
 ```
-🤖 Task: tools          # List all available tools
-🤖 Task: stats          # Show performance statistics
-🤖 Task: save           # Save evaluation report
-🤖 Task: quit           # Exit the agent
+🤖 Task: Who are you?    # Learn about the agent
+🤖 Task: tools           # List all available tools
+🤖 Task: stats           # Show performance statistics
+🤖 Task: quit            # Exit the agent
 ```
 
 ## 🛠️ Available Tools
 
-The agent has access to the following tools:
+The agent has access to 5 specialized tools:
 
-1. **rag_query**: Query the knowledge base with RAG
-2. **knowledge_search**: Search knowledge base (retrieval only)
-3. **generate_blog_post**: Create blog posts and social media content
-4. **generate_newsletter**: Generate newsletter-style content
-5. **generate_html**: Create HTML web pages
-6. **send_email**: Send emails with generated content
+1. **rag_query**: Answer questions using knowledge base with RAG
+2. **knowledge_search**: Retrieve information from knowledge base
+3. **generate_html**: Create HTML pages (saved to outputs/)
+4. **generate_pdf**: Generate PDF documents (saved to outputs/)
+5. **send_email**: Send emails via Gmail API with OAuth2
+
+**Note:** HTML and PDF tools automatically save files to the `outputs/` folder with timestamps.
 
 ## 📊 How It Works
 
@@ -303,18 +321,18 @@ For the email sending feature:
 
 ### Educational Assistant
 - Answer student questions from course materials
-- Generate study guides and summaries
+- Generate study guides and summaries (as PDF or HTML)
 - Create practice questions
 
 ### Content Creator
-- Generate blog posts from research papers
-- Create social media content
-- Produce newsletters
+- Generate HTML pages from research papers
+- Create PDF documents for distribution
+- Produce professional reports and guides
 
 ### Knowledge Management
 - Search through documentation
 - Synthesize information from multiple sources
-- Create reference materials
+- Create reference materials (PDF or HTML)
 
 ## 🔐 Security Notes
 
@@ -327,9 +345,10 @@ For the email sending feature:
 
 Potential improvements:
 
-- [ ] PDF generation for reports and slides
 - [ ] Web browsing capability for real-time information
 - [ ] Multi-turn conversations with memory
+- [ ] Image generation and analysis
+- [ ] Code execution and testing
 - [ ] Fine-tuning on specific educational domains
 - [ ] Web-based UI interface
 - [ ] Advanced scheduling and automation

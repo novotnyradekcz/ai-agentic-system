@@ -28,6 +28,13 @@ logs/*.log
 logs/*.json
 !logs/README.md
 
+# Outputs (keep directory structure but ignore generated output files)
+outputs/*.txt
+outputs/*.html
+outputs/*.pdf
+outputs/*.md
+!outputs/README.md
+
 # IDE
 .vscode/
 .idea/

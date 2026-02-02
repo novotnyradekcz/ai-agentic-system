@@ -116,6 +116,13 @@ class EmailSenderTool(Tool):
                     "error": f"Gmail authentication failed: {str(e)}"
                 }
             
+            # Add signature to body
+            signature = "\n\n---\nSent by AI Agentic System"
+            if is_html:
+                body_with_signature = body + "<br><br><hr><p><em>Sent by AI Agentic System</em></p>"
+            else:
+                body_with_signature = body + signature
+            
             # Create message
             message = MIMEMultipart('alternative')
             message['To'] = recipient
@@ -123,9 +130,9 @@ class EmailSenderTool(Tool):
             
             # Attach body
             if is_html:
-                message.attach(MIMEText(body, 'html'))
+                message.attach(MIMEText(body_with_signature, 'html'))
             else:
-                message.attach(MIMEText(body, 'plain'))
+                message.attach(MIMEText(body_with_signature, 'plain'))
             
             # Encode message
             raw_message = base64.urlsafe_b64encode(message.as_bytes()).decode('utf-8')

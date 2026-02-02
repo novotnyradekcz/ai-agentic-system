@@ -1,5 +1,11 @@
 # 🚀 Quick Start Guide - AI Agentic System
 
+Get up and running in 5 minutes with these 4 core capabilities:
+- 📚 Question Answering (RAG)
+- 📧 Email Communication (Gmail API)
+- 📄 PDF Creation (auto-saved to outputs/)
+- 🌐 HTML Generation (auto-saved to outputs/)
+
 ## 5-Minute Setup
 
 ### 1. Install Dependencies
@@ -31,22 +37,34 @@ python run_agent.py
 
 ## First Tasks to Try
 
-Once running, try these commands:
+Once running, try these commands to test each core capability:
 
-### Simple Q&A
+### 📚 Ask Questions
 ```
-🤖 Task: What is artificial intelligence?
-```
-
-### Generate Content
-```
-🤖 Task: Create a short social media post about machine learning
+🤖 Task: What is retrieval-augmented generation?
+🤖 Task: Explain machine learning
 ```
 
-### Check System
+### 📄 Create PDF (saved to outputs/)
 ```
-🤖 Task: tools
-🤖 Task: stats
+🤖 Task: Create a PDF about neural networks
+```
+
+### 🌐 Generate HTML (saved to outputs/)
+```
+🤖 Task: Create an HTML page about AI
+```
+
+### 📧 Send Email (requires Gmail OAuth2 setup)
+```
+🤖 Task: Send an email about RAG to user@example.com
+```
+
+### System Commands
+```
+🤖 Task: Who are you?  # Learn about the agent
+🤖 Task: tools         # List all available tools
+🤖 Task: stats         # Show performance metrics
 ```
 
 ## Command-Line Options

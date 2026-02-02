@@ -15,7 +15,7 @@ sys.path.append(str(Path(__file__).parent / "modules"))
 
 from modules.agent_reasoning import AgentReasoning
 from modules.agent_tools import ToolRegistry, RAGQueryTool, KnowledgeSearchTool
-from modules.content_tools import BlogPostGeneratorTool, NewsletterGeneratorTool, HTMLGeneratorTool
+from modules.content_tools import BlogPostGeneratorTool, NewsletterGeneratorTool, HTMLGeneratorTool, PDFGeneratorTool
 from modules.email_tool import EmailSenderTool
 from modules.agent_evaluator import AgentEvaluator
 from modules.rag_system import RAGSystem
@@ -36,29 +36,41 @@ class AgenticSystem:
     """
     
     # System identity and capabilities description
-    SYSTEM_IDENTITY = """I am an AI Agentic System - an advanced autonomous assistant that combines reasoning, tool-calling, and self-reflection to accomplish complex tasks.
+    SYSTEM_IDENTITY = """I am an AI Agentic System - an advanced autonomous assistant created as part of the Ciklum AI Academy capstone project.
 
-**Created as part of the Ciklum AI Academy** - a capstone project demonstrating modern agentic AI architecture and RAG technology.
+My 4 Core Capabilities:
 
-My core capabilities include:
+📚 **Question Answering (RAG)**
+   I can answer questions using both the documents in the data/ folder and my general knowledge.
+   I retrieve relevant information from your knowledge base and provide detailed, sourced answers.
 
-🧠 **Autonomous Reasoning**: I think through problems step-by-step, planning my approach before taking action.
+📧 **Email Communication**
+   I can draft and send emails via Gmail API with OAuth2 authentication.
+   Just tell me what to write about and who to send it to - I'll compose and send it.
 
-🛠️ **Tool-Based Actions**: I have access to several specialized tools:
-   • RAG Query - Answer questions using a knowledge base with source citations
-   • Knowledge Search - Retrieve relevant information from stored documents
-   • Blog Post Generator - Create professional blog posts in various styles (technical, casual, tutorial, storytelling)
-   • Newsletter Generator - Produce engaging newsletters with structured sections
-   • HTML Page Generator - Build complete HTML pages with styling
-   • Email Sender - Send emails securely via Gmail API with OAuth2
+📄 **PDF Document Creation**
+   I create professional PDF documents on any topic and automatically save them to the outputs/ folder.
+   Choose from 4 styles: report, guide, tutorial, or whitepaper.
+   Content can come from your data or my general knowledge.
 
-🔍 **Self-Reflection**: After completing tasks, I evaluate my performance and learn from the outcomes.
+🌐 **HTML Page Generation**
+   I build complete, styled HTML pages and automatically save them to the outputs/ folder.
+   Perfect for web content, presentations, or documentation.
+   Content can come from your data or my general knowledge.
 
-📊 **Performance Tracking**: I maintain metrics on my success rate, efficiency, and tool usage to continuously improve.
+**How I Work:**
+I use a 5-phase agentic process:
+1. 🧠 Reasoning - I think through the task and plan my approach
+2. 🔧 Tool Selection - I choose the right tools for the job
+3. ⚡ Execution - I run the selected tools
+4. 🔍 Reflection - I evaluate what happened and learn from it
+5. 📊 Evaluation - I assess my performance with metrics
 
-💬 **Interactive Dialogue**: I can engage in natural conversation while working on your tasks, explaining my reasoning and asking for clarification when needed.
-
-I'm designed to handle diverse tasks - from answering questions and conducting research to generating content and automating communications. I approach each task methodically: first reasoning about the best approach, selecting appropriate tools, executing actions, reflecting on results, and evaluating my performance.
+**Important Notes:**
+- When you ask me to create an HTML page, I automatically save it as an .html file in the outputs/ folder
+- When you ask me to create a PDF, I automatically save it as a .pdf file in the outputs/ folder
+- Emails are sent immediately through Gmail API (no files created)
+- All generated files are timestamped and stored in outputs/ for easy access
 
 How can I help you today?"""
     
@@ -138,19 +150,13 @@ How can I help you today?"""
         self.tools.register(KnowledgeSearchTool(self.rag_system.vector_db))
         
         # Content generation tools
-        self.tools.register(BlogPostGeneratorTool(
-            self.llm_client,
-            self.llm_provider,
-            self.model_name,
-            self.rag_system
-        ))
-        self.tools.register(NewsletterGeneratorTool(
-            self.llm_client,
-            self.llm_provider,
-            self.model_name,
-            self.rag_system
-        ))
         self.tools.register(HTMLGeneratorTool(
+            self.llm_client,
+            self.llm_provider,
+            self.model_name,
+            self.rag_system
+        ))
+        self.tools.register(PDFGeneratorTool(
             self.llm_client,
             self.llm_provider,
             self.model_name,
@@ -282,16 +288,19 @@ How can I help you today?"""
         
         # Step 4: Reflection
         reflection = None
+        overall_success = all(r["result"].get("success", False) for r in results)
         if auto_reflect:
             print("\n🔍 REFLECTING...")
-            overall_success = all(r["result"].get("success", False) for r in results)
             reflection = self.reasoning.reflect(
                 action_taken=f"Executed {len(results)} actions for task: {task}",
                 result=results,
-                expected_outcome=reasoning.get("execution_plan", "")
+                expected_outcome=reasoning.get("execution_plan", ""),
+                actual_success=overall_success
             )
-            print(f"✓ Success assessment: {'Yes' if reflection.get('success', False) else 'No'}")
-            print(f"✓ Analysis: {reflection.get('analysis', 'N/A')[:100]}...")
+            print(f"✓ Success assessment: {'Yes' if overall_success else 'No'}")
+            if reflection.get('analysis'):
+                analysis_preview = reflection['analysis'][:200] if len(reflection['analysis']) > 200 else reflection['analysis']
+                print(f"✓ Analysis: {analysis_preview}")
         
         # Step 5: Evaluation
         print("\n📊 EVALUATING...")
@@ -399,23 +408,154 @@ If a parameter is not explicitly mentioned, use a sensible default or leave it o
                 )
                 response_text = response.text
             
-            # Clean response and parse JSON
-            response_text = response_text.strip()
-            if response_text.startswith("```json"):
-                response_text = response_text[7:]
-            if response_text.startswith("```"):
-                response_text = response_text[3:]
-            if response_text.endswith("```"):
-                response_text = response_text[:-3]
-            response_text = response_text.strip()
+            # Clean response and parse JSON using the same helper as reasoning
+            response_text = self.reasoning._clean_json_response(response_text)
             
             params = json.loads(response_text)
             return params
         
+        except json.JSONDecodeError as e:
+            print(f"  Warning: Could not extract parameters (JSON error): {e}")
+            print(f"  Response was: {response_text[:200]}")
+            # Fallback: try to extract parameters manually from task
+            return self._fallback_parameter_extraction(tool_name, task)
         except Exception as e:
             print(f"  Warning: Could not extract parameters: {e}")
-            # Return minimal parameters based on task
-            return {"query": task} if "query" in str(tool.parameters) else {}
+            return self._fallback_parameter_extraction(tool_name, task)
+    
+    def _fallback_parameter_extraction(self, tool_name: str, task: str) -> Dict[str, Any]:
+        """
+        Fallback method to extract parameters using simple pattern matching.
+        Used when LLM-based extraction fails.
+        """
+        import re
+        
+        params = {}
+        task_lower = task.lower()
+        
+        # Tool-specific extraction patterns
+        if tool_name == "send_email":
+            # Extract email recipient
+            email_match = re.search(r'[\w\.-]+@[\w\.-]+\.\w+', task)
+            if email_match:
+                params['recipient'] = email_match.group(0)
+            
+            # Extract subject
+            subject_match = re.search(r'subject[:\s]+[\'"]([^\'"]+)[\'"]', task, re.IGNORECASE)
+            if not subject_match:
+                subject_match = re.search(r'with the subject[:\s]+[\'"]?([^\'"\.]+)[\'"]?', task, re.IGNORECASE)
+            if subject_match:
+                params['subject'] = subject_match.group(1).strip()
+            else:
+                # Infer subject from context or use default
+                if 'introducing yourself' in task_lower or 'introduce yourself' in task_lower:
+                    params['subject'] = "Introduction from AI Educational Assistant"
+                elif 'about' in task_lower:
+                    # Extract topic for subject line
+                    topic_match = re.search(r'about\s+(.+?)(?:\s+to\s+[\w\.-]+@|$)', task, re.IGNORECASE)
+                    if topic_match:
+                        topic = topic_match.group(1).strip()
+                        # Clean up topic (remove "to email@..." if present)
+                        topic = re.sub(r'\s+to\s+[\w\.-]+@.*$', '', topic, flags=re.IGNORECASE).strip()
+                        params['subject'] = f"Information about {topic}"
+                    else:
+                        params['subject'] = "Information from AI Educational Assistant"
+                elif 'report' in task_lower:
+                    params['subject'] = "Report from AI Educational Assistant"
+                elif 'update' in task_lower:
+                    params['subject'] = "Update from AI Educational Assistant"
+                else:
+                    # Extract first few words or use generic subject
+                    words = task.split()[:6]
+                    inferred_subject = ' '.join(words)
+                    if len(inferred_subject) > 50:
+                        params['subject'] = "Message from AI Educational Assistant"
+                    else:
+                        params['subject'] = inferred_subject if inferred_subject else "Message from AI Educational Assistant"
+            
+            # Body generation
+            if 'introducing yourself' in task_lower or 'introduce yourself' in task_lower:
+                params['body'] = (
+                    "Hello,\n\n"
+                    "I am an AI Educational Assistant created as part of the Ciklum AI Academy. "
+                    "I have advanced capabilities including:\n\n"
+                    "- Document processing and analysis\n"
+                    "- RAG-based question answering\n"
+                    "- Content generation (HTML pages, PDF documents)\n"
+                    "- Email communication\n\n"
+                    "I'm designed to help with research, learning, and knowledge synthesis.\n\n"
+                    "Best regards,\n"
+                    "AI Educational Assistant"
+                )
+            elif 'about' in task_lower:
+                # Extract topic and generate content about it
+                topic_match = re.search(r'about\s+(.+?)(?:\s+to\s+[\w\.-]+@|$)', task, re.IGNORECASE)
+                if topic_match:
+                    topic = topic_match.group(1).strip()
+                    # Generate content about the topic using RAG
+                    try:
+                        if self.rag_system:
+                            rag_result = self.rag_system.answer_question(
+                                f"Provide a concise, informative explanation about {topic}. Keep it brief and suitable for an email.",
+                                n_results=5,
+                                return_context=False
+                            )
+                            params['body'] = f"Hello,\n\n{rag_result.get('answer', f'Information about {topic}')}\n\nBest regards,\nAI Educational Assistant"
+                        else:
+                            params['body'] = f"Hello,\n\nHere is information about {topic}.\n\nBest regards,\nAI Educational Assistant"
+                    except Exception as e:
+                        params['body'] = f"Hello,\n\nI wanted to share information about {topic}.\n\nBest regards,\nAI Educational Assistant"
+                else:
+                    params['body'] = task
+            else:
+                # Try to extract just the content part (remove "send email to..." prefix)
+                body_match = re.search(r'(?:send|write).*?(?:email|message).*?(?:to.*?@[\w\.-]+\.\w+)?\s*[:\-]?\s*(.+)', task, re.IGNORECASE)
+                if body_match:
+                    params['body'] = body_match.group(1).strip()
+                else:
+                    params['body'] = task
+        
+        elif tool_name == "generate_html":
+            # Extract topic
+            if 'about' in task_lower:
+                topic_match = re.search(r'about\s+(.+?)(?:\.|$)', task, re.IGNORECASE)
+                if topic_match:
+                    params['topic'] = topic_match.group(1).strip()
+            if 'topic' not in params:
+                params['topic'] = task
+        
+        elif tool_name == "generate_pdf":
+            # Extract topic
+            if 'about' in task_lower:
+                topic_match = re.search(r'about\s+(.+?)(?:\.|$)', task, re.IGNORECASE)
+                if topic_match:
+                    params['topic'] = topic_match.group(1).strip()
+            if 'topic' not in params:
+                params['topic'] = task
+            
+            # Detect style
+            if 'report' in task_lower:
+                params['style'] = 'report'
+            elif 'guide' in task_lower:
+                params['style'] = 'guide'
+            elif 'tutorial' in task_lower:
+                params['style'] = 'tutorial'
+            elif 'whitepaper' in task_lower or 'white paper' in task_lower:
+                params['style'] = 'whitepaper'
+        
+        elif tool_name == "generate_newsletter":
+            if 'about' in task_lower or 'on' in task_lower:
+                topic_match = re.search(r'(?:about|on)\s+(.+?)(?:\.|$)', task, re.IGNORECASE)
+                if topic_match:
+                    params['topic'] = topic_match.group(1).strip()
+            if 'topic' not in params:
+                params['topic'] = task
+        
+        # For RAG tools, use query
+        elif tool_name in ["rag_query", "knowledge_search"]:
+            params['query'] = task
+        
+        return params
     
     def _generate_direct_answer(self, task: str) -> str:
         """Generate a direct answer when no tools are needed."""
@@ -477,9 +617,9 @@ Provide clear, concise, and accurate answers to questions."""
         print("\nExamples:")
         print("  • Who are you? / What can you do?")
         print("  • What is machine learning?")
-        print("  • Create a blog post about neural networks")
-        print("  • Generate a newsletter about AI and email it to user@example.com")
-        print("  • Create an HTML page about deep learning")
+        print("  • Create an HTML page about neural networks")
+        print("  • Generate a PDF about AI")
+        print("  • Send an email about deep learning to user@example.com")
         print("="*80 + "\n")
         
         while True:
@@ -548,6 +688,14 @@ Provide clear, concise, and accurate answers to questions."""
                         for i, src in enumerate(sources[:3], 1):
                             print(f"  {i}. {src.get('source', 'unknown')} (relevance: {src.get('relevance', 0):.2f})")
                 
+                elif tool == "knowledge_search":
+                    results = content.get('results', [])
+                    print(f"\n🔍 Found {len(results)} relevant documents:")
+                    for i, doc in enumerate(results[:5], 1):
+                        print(f"\n  {i}. {doc.get('source', 'unknown')} (relevance: {doc.get('score', 0):.2f})")
+                        preview = doc.get('text', '')[:150] + "..." if len(doc.get('text', '')) > 150 else doc.get('text', '')
+                        print(f"     {preview}")
+                
                 elif tool == "direct_answer":
                     print(f"\n💡 Answer: {content}")
                 
@@ -556,7 +704,15 @@ Provide clear, concise, and accurate answers to questions."""
                     if isinstance(content, dict):
                         if content.get('filepath'):
                             print(f"   Saved to: {content['filepath']}")
-                        if content.get('content'):
+                            # Don't show HTML preview if file is saved
+                            if tool == "generate_html":
+                                print(f"   Open the file in a browser to view the page")
+                            # Show content preview for other generators (exclude PDF as it's too long)
+                            elif content.get('content') and tool != "generate_pdf":
+                                preview = content['content'][:200] + "..." if len(content['content']) > 200 else content['content']
+                                print(f"\n   Preview:\n   {preview}")
+                        elif content.get('content'):
+                            # No filepath - show content
                             preview = content['content'][:200] + "..." if len(content['content']) > 200 else content['content']
                             print(f"\n   Preview:\n   {preview}")
                     else:
@@ -564,6 +720,18 @@ Provide clear, concise, and accurate answers to questions."""
                 
                 elif tool == "send_email":
                     print(f"\n✉️  {content.get('message', 'Email sent')}")
+                
+                else:
+                    # Fallback for any tool not explicitly handled
+                    if isinstance(content, dict):
+                        if 'answer' in content:
+                            print(f"\n💡 Answer: {content['answer']}")
+                        elif 'message' in content:
+                            print(f"\n📝 {content['message']}")
+                        else:
+                            print(f"\n✓ Result: {content}")
+                    else:
+                        print(f"\n✓ Result: {content}")
             else:
                 print(f"\n❌ {tool} failed: {tool_result.get('error', 'Unknown error')}")
         

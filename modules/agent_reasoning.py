@@ -108,7 +108,7 @@ Respond in JSON format with the following structure:
         
         return reasoning
     
-    def reflect(self, action_taken: str, result: Any, expected_outcome: Optional[str] = None) -> Dict[str, Any]:
+    def reflect(self, action_taken: str, result: Any, expected_outcome: Optional[str] = None, actual_success: bool = True) -> Dict[str, Any]:
         """
         Reflect on an action and its outcome.
         
@@ -116,27 +116,28 @@ Respond in JSON format with the following structure:
             action_taken: Description of the action
             result: The actual result
             expected_outcome: What was expected (if any)
+            actual_success: The actual success status of the action
             
         Returns:
             Dictionary containing reflection and suggestions
         """
-        system_prompt = """You are an AI agent capable of self-reflection.
-Analyze the action taken and its result. Evaluate:
-1. Was the action successful?
-2. Did it achieve the intended goal?
-3. What could be improved?
-4. Should we try a different approach?
+        system_prompt = f"""You are an AI agent capable of self-reflection.
+Analyze the action taken and its result. The action was {'SUCCESSFUL' if actual_success else 'UNSUCCESSFUL'}.
+Evaluate:
+1. What was achieved?
+2. What went well or what went wrong?
+3. What could be improved for future tasks?
+4. Are there any lessons learned?
 
 Respond in JSON format:
-{
-    "success": true/false,
-    "analysis": "Your analysis of what happened",
+{{
+    "success": {str(actual_success).lower()},
+    "analysis": "Your analysis of what happened and why",
     "strengths": ["What went well"],
     "weaknesses": ["What could improve"],
     "next_steps": ["Recommended next actions"],
-    "should_retry": true/false,
-    "alternative_approach": "If retry needed, suggest alternative"
-}"""
+    "lessons_learned": ["Key takeaways"]
+}}"""
         
         user_message = f"""Action Taken: {action_taken}
 Result: {result}"""
@@ -149,15 +150,16 @@ Result: {result}"""
         try:
             response_text = self._clean_json_response(response_text)
             reflection = json.loads(response_text)
+            # Ensure success matches actual outcome
+            reflection["success"] = actual_success
         except json.JSONDecodeError:
             reflection = {
-                "success": True,
+                "success": actual_success,
                 "analysis": response_text,
                 "strengths": [],
                 "weaknesses": [],
                 "next_steps": [],
-                "should_retry": False,
-                "alternative_approach": ""
+                "lessons_learned": []
             }
         
         # Log reflection
@@ -184,12 +186,17 @@ Result: {result}"""
         system_prompt = f"""You are an AI agent selecting the best tools for a task.
 Available tools: {', '.join(available_tools)}
 
-Analyze the task and select the most appropriate tool(s).
+Analyze the task carefully and select ONLY the tool(s) that are explicitly needed.
+- If the user asks for ONE specific output (e.g., "create a PDF"), select ONLY that tool
+- Only select multiple tools if the task explicitly requires multiple actions (e.g., "create a PDF and email it")
+- generate_html creates HTML pages
+- generate_pdf creates PDF documents
+- DO NOT select both generate_html and generate_pdf unless explicitly asked for both
 
 Respond in JSON format:
 {{
-    "selected_tools": ["tool1", "tool2"],
-    "reasoning": "Why these tools are appropriate",
+    "selected_tools": ["tool1"],
+    "reasoning": "Why this tool is appropriate",
     "sequence": "The order to use them in",
     "confidence": 0.0-1.0
 }}"""

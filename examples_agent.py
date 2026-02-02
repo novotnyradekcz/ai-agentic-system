@@ -94,10 +94,33 @@ def example_with_reflection():
         print(f"Improvements: {reflection.get('improvements', [])}")
 
 
-def example_reasoning_inspection():
-    """Example 4: Inspect agent's reasoning process."""
+def example_pdf_generation():
+    """Example 5: Generate PDF document."""
     print("\n" + "="*80)
-    print("EXAMPLE 4: Reasoning Inspection")
+    print("EXAMPLE 5: PDF Document Generation")
+    print("="*80)
+    
+    vector_db = VectorDatabase(collection_name="demo_kb")
+    agent = AgenticSystem(vector_db=vector_db, llm_provider="gemini")
+    
+    # Generate a PDF report
+    result = agent.execute_task(
+        "Create a PDF report about machine learning best practices"
+    )
+    
+    # Check execution results
+    for exec_result in result["execution_results"]:
+        if exec_result["result"].get("success"):
+            content = exec_result["result"].get("result", {})
+            if isinstance(content, dict) and "filepath" in content:
+                print(f"\n✅ PDF saved to: {content['filepath']}")
+                print(f"📄 File size: {content.get('filename', 'N/A')}")
+
+
+def example_reasoning_inspection():
+    """Example 6: Inspect agent's reasoning process."""
+    print("\n" + "="*80)
+    print("EXAMPLE 6: Reasoning Inspection")
     print("="*80)
     
     vector_db = VectorDatabase(collection_name="demo_kb")
@@ -166,11 +189,11 @@ def example_tool_selection():
 def run_all_examples():
     """Run all examples sequentially."""
     examples = [
-        ("Simple Query", example_simple_query),
         ("System Identity", example_system_identity),
         ("Simple Query", example_simple_query),
         ("Content Generation", example_content_generation),
         ("With Reflection", example_with_reflection),
+        ("PDF Generation", example_pdf_generation),
         ("Reasoning Inspection", example_reasoning_inspection),
         ("Performance Metrics", example_performance_metrics),
         ("Tool Selection", example_tool_selection),
@@ -198,7 +221,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--example',
         type=int,
-        choices=range(1, 8),
+        choices=range(1, 9),
         help='Run specific example (1-6), or omit to run all'
     )
     

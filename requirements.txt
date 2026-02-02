@@ -29,10 +29,8 @@ google-auth-oauthlib>=1.2.0
 google-auth-httplib2>=0.2.0
 google-api-python-client>=2.108.0
 
-# Content Generation
-# For potential future PDF generation (optional)
-# reportlab>=4.0.0
-# fpdf2>=2.7.0
+# Content Generation (PDF)
+reportlab>=4.0.0
 
 # Utilities
 python-dotenv==1.0.1
