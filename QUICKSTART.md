@@ -8,6 +8,22 @@ Get up and running in 5 minutes with these 4 core capabilities:
 
 ## 5-Minute Setup
 
+### 0. Install FFmpeg (Required)
+FFmpeg is required for audio/video transcription:
+
+**macOS:**
+```bash
+brew install ffmpeg
+```
+
+**Ubuntu/Debian:**
+```bash
+sudo apt-get install ffmpeg
+```
+
+**Windows:**
+Download from [ffmpeg.org](https://ffmpeg.org/download.html)
+
 ### 1. Install Dependencies
 ```bash
 pip install -r requirements.txt

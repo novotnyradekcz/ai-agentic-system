@@ -77,6 +77,10 @@ This system implements secure practices:
 ### Prerequisites
 
 - Python 3.8+
+- **FFmpeg** (required for audio/video transcription)
+  - macOS: `brew install ffmpeg`
+  - Ubuntu/Debian: `sudo apt-get install ffmpeg`
+  - Windows: Download from [ffmpeg.org](https://ffmpeg.org/download.html)
 - API key for at least one LLM provider:
   - Google Gemini (recommended, default)
   - OpenAI
